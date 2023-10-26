@@ -33,6 +33,10 @@ module.exports = {
         type: Sequelize.INTEGER,
         defaultValue: null
       },
+      pin: {
+        type: Sequelize.INTEGER,
+        defaultValue: null
+      },
       device_token: {
         type: Sequelize.TEXT,
         defaultValue: null,

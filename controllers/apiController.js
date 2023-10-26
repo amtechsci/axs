@@ -41,6 +41,7 @@ module.exports = {
             const token = generateToken(user);
             if (user) {
                 await user.update({ device_token : device_token , device_id:device_id });
+                let new_user = user.name ? 0 : 1;
                 res.json({
                     message: 'Login success',
                     user: {
@@ -49,17 +50,16 @@ module.exports = {
                         email: user.email,
                         mobile: user.mobile,
                         gender: user.gender,
-                        profile_img: user.profile_img
+                        profile_img: user.profile_img,
+                        new_user
                     },
                     token
                 });
             } else {
-                // Handle the case where the user is not found
                 res.status(404).send({
                     message: 'User not found or OTP incorrect'
                 });
             }
-    
         } catch (error) {
             console.error('Error in OTP verification:', error);
             res.status(500).send({
@@ -67,5 +67,95 @@ module.exports = {
             });
         }
     },
+    create_pin: async (req, res) => {
+        try {
+            const userId = req.user.id;
+            const user = await User.findByPk(userId);
+            if (!user) {
+                return res.status(404).json({ message: "User not found" });
+            }
+            const { pin } = req.body;
+            user.pin = pin;
+            await user.save();
+            let new_user = user.name ? 0 : 1;
+            res.status(200).json({
+                message: "Pin updated successfully",
+                user: {
+                    id: user.id,
+                    name: user.name,
+                    email: user.email,
+                    mobile: user.mobile,
+                    gender: user.gender,
+                    profile_img: user.profile_img,
+                    new_user
+                }
+            });
     
+        } catch (error) {
+            console.error('Error in create_pin:', error);
+            res.status(500).json({
+                message: 'Internal Server Error ' + error.message
+            });
+        }
+    },
+    setup_profile: async (req, res) => {
+        try {
+            const userId = req.user.id;
+            const user = await User.findByPk(userId);
+            if (!user) {
+                return res.status(404).send({ message: "User not found" });
+            }
+            const { name, email, gender } = req.body;
+            user.name = name;
+            user.email = email;
+            user.gender = gender;
+            await user.save();
+            res.status(200).send({
+                message: "Profile updated successfully",
+                user: {
+                    id: user.id,
+                    mobile: user.mobile,
+                    name: user.name,
+                    email: user.email
+                }
+            });
+
+        } catch (error) {
+            console.error('Error in setup_profile:', error);
+            res.status(500).send({
+                message: 'Internal Server Error ' + error.message
+            });
+        }
+    },
+    update_profile_image: async (req, res) => {
+        try {
+            const userId = req.user.id;
+            const user = await User.findByPk(userId);
+            if (!user) {
+                return res.status(404).send({ message: "User not found" });
+            }
+            if (req.file && req.file.path) {
+                console.log(req.file);
+                user.profile_img = req.file.path;
+                await user.save();
+                res.status(200).send({
+                    message: "Profile image updated successfully",
+                    user: {
+                        id: user.id,
+                        mobile: user.mobile,
+                        name: user.name,
+                        email: user.email,
+                        profile_img: user.profile_img
+                    }
+                });
+            } else {
+                res.status(400).send({ message: "No image file provided" });
+            }
+        } catch (error) {
+            console.error('Error in setup_profile:', error);
+            res.status(500).send({
+                message: 'Internal Server Error ' + error.message
+            });
+        }
+    },
 };

@@ -20,8 +20,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// Database connection
-// Sequelize (MySQL)
 db.sequelize.authenticate()
   .then(() => console.log('MySQL connected...'))
   .catch(err => console.error('Error connecting to MySQL:', err));
@@ -36,7 +34,9 @@ mongoose.connection.on('error', (err) => {
 
 // Routes
 const apiRoutes = require('./routes/api');
+const protectedRoutes = require('./routes/protectedRouter');
 app.use('/api', apiRoutes);
+app.use('/api/user', protectedRoutes);
 
 // Start the Server
 const PORT = process.env.PORT || 3000;

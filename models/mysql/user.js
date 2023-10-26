@@ -34,6 +34,10 @@ module.exports = (sequelize) => {
       type: DataTypes.INTEGER,
       allowNull: true,
     },
+    pin: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
     device_token: {
       type: DataTypes.TEXT,
       allowNull: true,
