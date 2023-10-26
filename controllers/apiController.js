@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 
 const generateToken = (user) => {
     const secretKey = process.env.JWT_SECRET;
-    return jwt.sign({ id: user.id, mobile: user.mobile }, secretKey, { expiresIn: '1h' });
+    return jwt.sign({ id: user.id }, secretKey, { expiresIn: '30d' });
 };
 
 module.exports = {
@@ -34,15 +34,13 @@ module.exports = {
     },
     otp: async (req, res) => {
         try {
-            const { mobile, otp } = req.body;
-            
-            // Find the user by mobile and otp
+            const { mobile, otp, device_token, device_id } = req.body;
             const user = await User.findOne({
                 where: { mobile, otp }
             });
             const token = generateToken(user);
-            // Check if user is found
             if (user) {
+                await user.update({ device_token : device_token , device_id:device_id });
                 res.json({
                     message: 'Login success',
                     user: {
