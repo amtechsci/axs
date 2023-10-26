@@ -1,0 +1,23 @@
+{
+  "development": {
+    "username": "u623876688_axs",
+    "password": "q1F|/X9wL[N",
+    "database": "u623876688_axs",
+    "host": "217.21.95.154",
+    "dialect": "mysql"
+  },
+  "test": {
+    "username": "u623876688_axs",
+    "password": "q1F|/X9wL[N",
+    "database": "u623876688_axs",
+    "host": "217.21.95.154",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "u623876688_axs",
+    "password": "q1F|/X9wL[N",
+    "database": "u623876688_axs",
+    "host": "217.21.95.154",
+    "dialect": "mysql"
+  }
+}
