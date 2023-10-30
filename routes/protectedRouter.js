@@ -21,5 +21,8 @@ protectedRouter.use(authMiddleware);
 protectedRouter.post('/create-pin', apiController.create_pin);
 protectedRouter.post('/setup-profile', apiController.setup_profile);
 protectedRouter.post('/update-profile-image', upload.single('profile_img'), apiController.update_profile_image);
+protectedRouter.get('/notification', apiController.notification);
+protectedRouter.get('/category', apiController.category);
+protectedRouter.get('/get_subscription', apiController.get_subscription);
 
 module.exports = protectedRouter;

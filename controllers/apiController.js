@@ -1,5 +1,7 @@
 const db = require('../models');
 const User = db.User;
+const Notification = db.Notification;
+const Category = db.Category;
 const jwt = require('jsonwebtoken');
 
 const generateToken = (user) => {
@@ -13,10 +15,10 @@ module.exports = {
             const { mobile } = req.body;
             const [user, created] = await User.findOrCreate({
                 where: { mobile },
-                defaults: { otp: 1111 }
+                defaults: { otp: 111111 }
             });
             if (!created) {
-                await user.update({ otp: 1111 });
+                await user.update({ otp: 111111 });
             }
             res.json({
                 message: created ? 'User created and OTP sent' : 'OTP sent',
@@ -158,4 +160,74 @@ module.exports = {
             });
         }
     },
+    notification: async (req, res) => {
+        try {
+            const userId = req.user.id;
+            const user = await User.findByPk(userId);
+            if (!user) {
+                return res.status(404).send({ message: "User not found" });
+            }
+            console.log(db.Notification);
+            const notification = await Notification.findAll({
+                where: { "uid":userId }
+            });
+            res.status(200).send({
+                message: "Notification fetch successfully",
+                data: {
+                    notification
+                }
+            });
+        } catch (error) {
+            console.error('Error in setup_profile:', error);
+            res.status(500).send({
+                message: 'Internal Server Error ' + error.message
+            });
+        }
+    },
+    category: async (req, res) => {
+        try {
+            const userId = req.user.id;
+            const user = await User.findByPk(userId);
+            if (!user) {
+                return res.status(404).send({ message: "User not found" });
+            }
+            const category = await Category.findAll();
+            res.status(200).send({
+                message: "Profile image updated successfully",
+                data: {
+                    category
+                }
+            });
+        } catch (error) {
+            console.error('Error in setup_profile:', error);
+            res.status(500).send({
+                message: 'Internal Server Error ' + error.message
+            });
+        }
+    },
+    get_subscription: async (req, res) => {
+        try {
+            const userId = req.user.id;
+            const user = await User.findByPk(userId);
+            if (!user) {
+                return res.status(404).send({ message: "User not found" });
+            }
+            const category = await Category.findAll();
+            res.status(200).send({
+                message: "Profile image updated successfully",
+                user: {
+                    id: user.id,
+                    mobile: user.mobile,
+                    name: user.name,
+                    email: user.email,
+                    profile_img: user.profile_img
+                }
+            });
+        } catch (error) {
+            console.error('Error in setup_profile:', error);
+            res.status(500).send({
+                message: 'Internal Server Error ' + error.message
+            });
+        }
+    }
 };
