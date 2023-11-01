@@ -2,6 +2,9 @@ const db = require('../models');
 const User = db.User;
 const Notification = db.Notification;
 const Category = db.Category;
+const Preference = db.Preference;
+const Get_subscription = db.Get_subscription;
+const Experience = db.Experience;
 const jwt = require('jsonwebtoken');
 
 const generateToken = (user) => {
@@ -40,8 +43,8 @@ module.exports = {
             const user = await User.findOne({
                 where: { mobile, otp }
             });
-            const token = generateToken(user);
             if (user) {
+                const token = generateToken(user);
                 await user.update({ device_token : device_token , device_id:device_id });
                 let new_user = user.name ? 0 : 1;
                 res.json({
@@ -129,6 +132,48 @@ module.exports = {
             });
         }
     },
+    category: async (req, res) => {
+        try {
+            const userId = req.user.id;
+            const user = await User.findByPk(userId);
+            if (!user) {
+                return res.status(404).send({ message: "User not found" });
+            }
+            const category = await Category.findAll();
+            res.status(200).send({
+                message: "Profile image updated successfully",
+                data: {
+                    category
+                }
+            });
+        } catch (error) {
+            console.error('Error in setup_profile:', error);
+            res.status(500).send({
+                message: 'Internal Server Error ' + error.message
+            });
+        }
+    },
+    add_preferences: async (req, res) => {
+        try {
+            const userId = req.user.id;
+            const user = await User.findByPk(userId);
+            if (!user) {
+                return res.status(404).send({ message: "User not found" });
+            }
+            const { cid } = req.body;
+            const catIds = cid.split(',').map(cat_id => ({ uid: user.id, cid: Number(cat_id) }));
+            await Preference.bulkCreate(catIds);
+            res.status(200).send({
+                message: "Preferences updated successfully",
+            });
+
+        } catch (error) {
+            console.error('Error in setup_profile:', error);
+            res.status(500).send({
+                message: 'Internal Server Error ' + error.message
+            });
+        }
+    },
     update_profile_image: async (req, res) => {
         try {
             const userId = req.user.id;
@@ -184,19 +229,17 @@ module.exports = {
             });
         }
     },
-    category: async (req, res) => {
+    get_subscription: async (req, res) => {
         try {
             const userId = req.user.id;
             const user = await User.findByPk(userId);
             if (!user) {
                 return res.status(404).send({ message: "User not found" });
             }
-            const category = await Category.findAll();
+            const get_subscription = await Get_subscription.findAll();
             res.status(200).send({
-                message: "Profile image updated successfully",
-                data: {
-                    category
-                }
+                message: "Subscription fetch successfully",
+                get_subscription
             });
         } catch (error) {
             console.error('Error in setup_profile:', error);
@@ -205,23 +248,26 @@ module.exports = {
             });
         }
     },
-    get_subscription: async (req, res) => {
+    recommendations: async (req, res) => {
         try {
             const userId = req.user.id;
             const user = await User.findByPk(userId);
             if (!user) {
                 return res.status(404).send({ message: "User not found" });
             }
-            const category = await Category.findAll();
-            res.status(200).send({
-                message: "Profile image updated successfully",
-                user: {
-                    id: user.id,
-                    mobile: user.mobile,
-                    name: user.name,
-                    email: user.email,
-                    profile_img: user.profile_img
+            const preferences = await Preference.findAll({
+                where:{uid:userId}
+            });
+            const preferenceCids = preferences.map(preference => preference.cid);
+            const experiences = await Experience.findAll({
+                attributes: ['id','title', 'location', 'images'],
+                where: {
+                    cid: preferenceCids
                 }
+            });
+            res.status(200).send({
+                message: "recommendations fetch successfully",
+                "recommendations":experiences
             });
         } catch (error) {
             console.error('Error in setup_profile:', error);
@@ -229,5 +275,29 @@ module.exports = {
                 message: 'Internal Server Error ' + error.message
             });
         }
-    }
+    },
+    recommendation_details: async (req, res) => {
+        try {
+            const userId = req.user.id;
+            const user = await User.findByPk(userId);
+            if (!user) {
+                return res.status(404).send({ message: "User not found" });
+            }
+            const { rid } = req.query;
+            const experiences = await Experience.findAll({
+                where: {
+                    id: rid
+                }
+            });
+            res.status(200).send({
+                message: "recommendation fetch successfully",
+                "recommendations":experiences
+            });
+        } catch (error) {
+            console.error('Error in setup_profile:', error);
+            res.status(500).send({
+                message: 'Internal Server Error ' + error.message
+            });
+        }
+    },
 };

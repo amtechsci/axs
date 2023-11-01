@@ -19,10 +19,17 @@ protectedRouter.use(authMiddleware);
 
 
 protectedRouter.post('/create-pin', apiController.create_pin);
+// protectedRouter.post('/forgot-pin', apiController.forgot_pin);
 protectedRouter.post('/setup-profile', apiController.setup_profile);
 protectedRouter.post('/update-profile-image', upload.single('profile_img'), apiController.update_profile_image);
-protectedRouter.get('/notification', apiController.notification);
 protectedRouter.get('/category', apiController.category);
-protectedRouter.get('/get_subscription', apiController.get_subscription);
+protectedRouter.post('/add-preferences', apiController.add_preferences);
+protectedRouter.get('/notification', apiController.notification);
+protectedRouter.get('/get-subscription', apiController.get_subscription);
+// protectedRouter.get('/buy-subscription', apiController.buy_subscription);
+// protectedRouter.get('/update-subscription', apiController.update_subscription);
+// protectedRouter.post('/cancel-subscription', apiController.cancel_subscription);
+protectedRouter.get('/recommendations', apiController.recommendations);
+protectedRouter.get('/recommendation-details', apiController.recommendation_details);
 
 module.exports = protectedRouter;
