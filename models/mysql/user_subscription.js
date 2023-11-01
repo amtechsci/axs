@@ -9,28 +9,24 @@ module.exports = (sequelize) => {
       primaryKey: true,
       autoIncrement: true
     },
-    plan_name: {
-      type: DataTypes.STRING(55),
+    uid: {
+      type: DataTypes.INTEGER,
       allowNull: true
     },
-    plan_description: {
-      type: DataTypes.TEXT,
+    sub_id: {
+      type: DataTypes.INTEGER,
       allowNull: true
     },
-    plan_type: {
-      type: DataTypes.STRING(55),
+    purchase_date: {
+      type: DataTypes.DATE,
       allowNull: true
     },
-    validity: {
-      type: DataTypes.STRING(10),
+    validity_till: {
+      type: DataTypes.DATE,
       allowNull: true
     },
-    price: {
-      type: DataTypes.STRING(7),
-      allowNull: true
-    },
-    plan_description: {
-      type: DataTypes.TEXT,
+    status: {
+      type: DataTypes.INTEGER,
       allowNull: true
     },
     created_at: {
@@ -50,6 +46,13 @@ module.exports = (sequelize) => {
     timestamps: false,
     underscored: true
   });
+
+  User_subscription.associate = (models) => {
+    User_subscription.belongsTo(models.Get_subscription, {
+      foreignKey: 'sub_id',
+      as: 'get_subscription'
+    });
+  };
 
   return User_subscription;
 };

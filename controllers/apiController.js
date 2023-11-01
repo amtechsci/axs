@@ -1,9 +1,10 @@
 const db = require('../models');
 const User = db.User;
-const Notification = db.Notification;
+const Notification = require('../models/mongo/notification');
 const Category = db.Category;
 const Preference = db.Preference;
 const Get_subscription = db.Get_subscription;
+const User_subscription = db.User_subscription;
 const Experience = db.Experience;
 const jwt = require('jsonwebtoken');
 
@@ -205,6 +206,25 @@ module.exports = {
             });
         }
     },
+    get_user: async (req, res) => {
+        try {
+            const userId = req.user.id;
+            const user = await User.findByPk(userId);
+            if (!user) {
+                return res.status(404).send({ message: "User not found" });
+            }else{
+                res.status(200).send({
+                    message: "User data successfully",
+                    data : {user}
+                });
+            }
+        } catch (error) {
+            console.error('Error in setup_profile:', error);
+            res.status(500).send({
+                message: 'Internal Server Error ' + error.message
+            });
+        }
+    },
     notification: async (req, res) => {
         try {
             const userId = req.user.id;
@@ -212,14 +232,12 @@ module.exports = {
             if (!user) {
                 return res.status(404).send({ message: "User not found" });
             }
-            console.log(db.Notification);
-            const notification = await Notification.findAll({
-                where: { "uid":userId }
-            });
+            console.log("UserId Type:", typeof userId, "Value:", userId);
+            const notifications = await Notification.find({ uid: userId });
             res.status(200).send({
                 message: "Notification fetch successfully",
                 data: {
-                    notification
+                    notifications
                 }
             });
         } catch (error) {
@@ -240,6 +258,36 @@ module.exports = {
             res.status(200).send({
                 message: "Subscription fetch successfully",
                 get_subscription
+            });
+        } catch (error) {
+            console.error('Error in setup_profile:', error);
+            res.status(500).send({
+                message: 'Internal Server Error ' + error.message
+            });
+        }
+    },
+    user_current_subscription: async (req, res) => {
+        try {
+            const userId = req.user.id;
+            const user = await User.findByPk(userId);
+            if (!user) {
+                return res.status(404).send({ message: "User not found" });
+            }
+            const user_subscription = await User_subscription.findOne({
+                where: {
+                    uid: userId,
+                    status: 1
+                },
+                include: [{
+                    model: Get_subscription,
+                    as: 'get_subscription',
+                    attributes: ['plan_name', 'plan_description', 'plan_type'],
+                }],
+                attributes: ['validity_till', 'status', 'created_at', 'updated_at']
+            });            
+            res.status(200).send({
+                message: "Subscription fetch successfully",
+                user_subscription
             });
         } catch (error) {
             console.error('Error in setup_profile:', error);
