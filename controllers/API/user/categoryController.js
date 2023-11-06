@@ -5,8 +5,8 @@ const Category = db.Category;
 const Expert_category = db.Expert_category;
 const Preference = db.Preference;
 const Get_subscription = db.Get_subscription;
-const User_subscription = db.User_subscription;
 const Experience = db.Experience;
+const Task = db.Task;
 
 module.exports = {
     category: async (req, res) => {
@@ -136,6 +136,51 @@ module.exports = {
             res.status(200).send({
                 message: "recommendation fetch successfully",
                 "recommendations":experiences
+            });
+        } catch (error) {
+            console.error('Error in setup_profile:', error);
+            res.status(500).send({
+                message: 'Internal Server Error ' + error.message
+            });
+        }
+    },
+    task: async (req, res) => {
+        try {
+            const userId = req.user.id;
+            const user = await User.findByPk(userId);
+            if (!user) {
+                return res.status(404).send({ message: "User not found" });
+            }
+            const task = await Task.findAll({
+                where:{uid:userId}
+            });
+            res.status(200).send({
+                message: "Task fetch successfully",
+                task
+            });
+        } catch (error) {
+            console.error('Error in setup_profile:', error);
+            res.status(500).send({
+                message: 'Internal Server Error ' + error.message
+            });
+        }
+    },
+    task_details: async (req, res) => {
+        try {
+            const userId = req.user.id;
+            const user = await User.findByPk(userId);
+            if (!user) {
+                return res.status(404).send({ message: "User not found" });
+            }
+            const { tid } = req.query;
+            const task = await Task.findAll({
+                where: {
+                    id: tid
+                }
+            });
+            res.status(200).send({
+                message: "Task fetch successfully",
+                task
             });
         } catch (error) {
             console.error('Error in setup_profile:', error);

@@ -34,5 +34,7 @@ protectedRouter.get('/user-current-subscription', userController.user_current_su
 // protectedRouter.post('/cancel-subscription', categoryController.cancel_subscription);
 protectedRouter.get('/recommendations', categoryController.recommendations);
 protectedRouter.get('/recommendation-details', categoryController.recommendation_details);
+protectedRouter.get('/task', categoryController.task);
+protectedRouter.get('/task-details', categoryController.task_details);
 
 module.exports = protectedRouter;
