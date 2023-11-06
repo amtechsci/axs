@@ -17,6 +17,10 @@ module.exports = (sequelize) => {
       type: DataTypes.TEXT,
       allowNull: true
     },
+    things_to_do: {
+      type: DataTypes.TEXT,
+      allowNull: true
+    },
     images: {
       type: DataTypes.TEXT,
       allowNull: true
