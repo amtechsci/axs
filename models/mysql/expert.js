@@ -1,53 +1,50 @@
 const { Model, DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
-  class Experience extends Model {}
+  class Expert extends Model {}
 
-  Experience.init({
+  Expert.init({
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true
     },
-    title: {
-      type: DataTypes.STRING(255),
+    name: {
+      type: DataTypes.STRING(25),
       allowNull: true
     },
-    description: {
-      type: DataTypes.TEXT,
+    email: {
+      type: DataTypes.STRING(55),
       allowNull: true
     },
-    things_to_do: {
-      type: DataTypes.TEXT,
+    mobile: {
+      type: DataTypes.BIGINT,
       allowNull: true
     },
-    images: {
-      type: DataTypes.TEXT,
-      allowNull: true
-    },
-    cid: {
+    gender: {
       type: DataTypes.INTEGER,
-      allowNull: true
+      allowNull: true,
+      comment: 'male=1, female=2' // Note: Comment here is only for reference; it won't be set in the DB
     },
-    location: {
+    profile_img: {
       type: DataTypes.TEXT,
       allowNull: true
     },
-    from: {
-      type: DataTypes.DATE,
+    otp: {
+      type: DataTypes.INTEGER,
       allowNull: true,
     },
-    to: {
-      type: DataTypes.DATE,
+    pin: {
+      type: DataTypes.INTEGER,
       allowNull: true,
     },
-    price: {
-      type: DataTypes.STRING(7),
-      allowNull: true
+    device_token: {
+      type: DataTypes.TEXT,
+      allowNull: true,
     },
-    type: {
-      type: DataTypes.STRING(11),
-      allowNull: true
+    device_id: {
+      type: DataTypes.TEXT,
+      allowNull: true,
     },
     created_at: {
       type: DataTypes.DATE,
@@ -61,10 +58,11 @@ module.exports = (sequelize) => {
     }
   }, {
     sequelize,
-    modelName: 'Experience',
-    tableName: 'experience',
+    modelName: 'Expert',
+    tableName: 'expert',
     timestamps: false,
     underscored: true
   });
-  return Experience;
+
+  return Expert;
 };

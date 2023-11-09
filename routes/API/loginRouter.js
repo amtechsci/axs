@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const loginController = require('../../controllers/API/loginController');
+const loginController = require('../../controllers/API/user/loginController');
 
 // User Routes
-router.post('/user/login', loginController.login);
-router.post('/user/otp', loginController.otp);
+router.post('/login', loginController.login);
+router.post('/otp', loginController.otp);
 
 
 

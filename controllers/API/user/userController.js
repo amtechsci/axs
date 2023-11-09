@@ -1,11 +1,8 @@
 const db = require('../../../models');
 const User = db.User;
-const Notification = require('../../../models/mongo/notification');
-const Category = db.Category;
 const Preference = db.Preference;
 const Get_subscription = db.Get_subscription;
 const User_subscription = db.User_subscription;
-const Experience = db.Experience;
 
 module.exports = {
     create_pin: async (req, res) => {
@@ -53,12 +50,6 @@ module.exports = {
             await user.save();
             res.status(200).send({
                 message: "Profile updated successfully",
-                user: {
-                    id: user.id,
-                    mobile: user.mobile,
-                    name: user.name,
-                    email: user.email
-                }
             });
 
         } catch (error) {
@@ -81,13 +72,6 @@ module.exports = {
                 await user.save();
                 res.status(200).send({
                     message: "Profile image updated successfully",
-                    user: {
-                        id: user.id,
-                        mobile: user.mobile,
-                        name: user.name,
-                        email: user.email,
-                        profile_img: user.profile_img
-                    }
                 });
             } else {
                 res.status(400).send({ message: "No image file provided" });

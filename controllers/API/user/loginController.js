@@ -1,5 +1,6 @@
-const db = require('../../models');
+const db = require('../../../models');
 const User = db.User;
+const Expert = db.Expert;
 const jwt = require('jsonwebtoken');
 const twilio = require('twilio')(process.env.twilioAccountSid, process.env.twilioAuthToken);
 
@@ -11,14 +12,29 @@ const generateToken = (user) => {
 module.exports = {
     login: async (req, res) => {
         try {
-            const { mobile } = req.body;
+            const { mobile,user_type } = req.body;
             otp = 111111;
-            const [user, created] = await User.findOrCreate({
-                where: { mobile },
-                defaults: { otp }
-            });
-            if (!created) {
-                await user.update({ otp });
+            let mess,userdata;
+            if(user_type == 'user'){
+                const [user, created] = await User.findOrCreate({
+                    where: { mobile },
+                    defaults: { otp }
+                });
+                if (!created) {
+                    await user.update({ otp });
+                }
+                mess = created ? user_type+' created and OTP sent' : 'OTP sent';
+                userdata = user;
+            }else{
+                const [user, created] = await Expert.findOrCreate({
+                    where: { mobile },
+                    defaults: { otp }
+                });
+                if (!created) {
+                    await user.update({ otp });
+                }
+                mess = created ? user_type+' created and OTP sent' : 'OTP sent';
+                userdata = user;
             }
             twilio.messages.create({
                 body: 'Your OTP is '+otp,
@@ -26,10 +42,10 @@ module.exports = {
                 to: mobile
             })
             res.json({
-                message: created ? 'User created and OTP sent' : 'OTP sent',
+                message: mess,
                 user: {
-                    id: user.id,
-                    mobile: user.mobile
+                    id: userdata.id,
+                    mobile: userdata.mobile
                 }
             });
         } catch (error) {

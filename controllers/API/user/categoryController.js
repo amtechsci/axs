@@ -7,6 +7,8 @@ const Preference = db.Preference;
 const Get_subscription = db.Get_subscription;
 const Experience = db.Experience;
 const Task = db.Task;
+const Booking = db.Booking;
+const Expert = db.Expert;
 
 module.exports = {
     category: async (req, res) => {
@@ -181,6 +183,74 @@ module.exports = {
             res.status(200).send({
                 message: "Task fetch successfully",
                 task
+            });
+        } catch (error) {
+            console.error('Error in setup_profile:', error);
+            res.status(500).send({
+                message: 'Internal Server Error ' + error.message
+            });
+        }
+    },
+    booking: async (req, res) => {
+        try {
+            const userId = req.user.id;
+            const user = await User.findByPk(userId);
+            if (!user) {
+                return res.status(404).send({ message: "User not found" });
+            }
+            const booking = await Booking.findAll({
+                where:{uid:userId}
+            });
+            res.status(200).send({
+                message: "Booking fetch successfully",
+                booking
+            });
+        } catch (error) {
+            console.error('Error in setup_profile:', error);
+            res.status(500).send({
+                message: 'Internal Server Error ' + error.message
+            });
+        }
+    },
+    booking_details: async (req, res) => {
+        try {
+            const userId = req.user.id;
+            const user = await User.findByPk(userId);
+            if (!user) {
+                return res.status(404).send({ message: "User not found" });
+            }
+            const { booking_id } = req.query;
+            const booking = await Booking.findAll({
+                where: {
+                    id: booking_id
+                },
+                include: [{
+                    model: Experience,
+                    as: 'experience'
+                }]
+            });
+            res.status(200).send({
+                message: "Booking details fetched successfully",
+                booking
+            });
+        } catch (error) {
+            console.error('Error in booking_details:', error);
+            res.status(500).send({
+                message: 'Internal Server Error ' + error.message
+            });
+        }
+    },
+    expert_list: async (req, res) => {
+        try {
+            const userId = req.user.id;
+            const user = await User.findByPk(userId);
+            if (!user) {
+                return res.status(404).send({ message: "User not found" });
+            }
+            const expert = await Expert.findAll();
+            res.status(200).send({
+                message: "Expert fetch successfully",
+                expert
             });
         } catch (error) {
             console.error('Error in setup_profile:', error);

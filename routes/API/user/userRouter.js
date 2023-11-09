@@ -36,5 +36,8 @@ protectedRouter.get('/recommendations', categoryController.recommendations);
 protectedRouter.get('/recommendation-details', categoryController.recommendation_details);
 protectedRouter.get('/task', categoryController.task);
 protectedRouter.get('/task-details', categoryController.task_details);
+protectedRouter.get('/booking', categoryController.booking);
+protectedRouter.get('/booking-details', categoryController.booking_details);
+protectedRouter.get('/expert-list', categoryController.expert_list);
 
 module.exports = protectedRouter;
