@@ -13,9 +13,9 @@ module.exports = {
     login: async (req, res) => {
         try {
             const { mobile,user_type } = req.body;
-            otp = 111111;
+            otp = 1111;
             let mess,userdata;
-            if(user_type == 'user'){
+            if(user_type == 1){
                 const [user, created] = await User.findOrCreate({
                     where: { mobile },
                     defaults: { otp }
@@ -57,10 +57,14 @@ module.exports = {
     },
     otp: async (req, res) => {
         try {
-            const { mobile, otp, device_token, device_id } = req.body;
-            const user = await User.findOne({
-                where: { mobile, otp }
-            });
+            const { mobile, otp, device_token, device_id, user_type} = req.body;
+            let where = {where: { mobile, otp }}
+            let user;
+            if(user_type == 1){
+                user = await User.findOne(where);
+            }else{
+                user = await Expert.findOne(where);
+            }
             if (user) {
                 const token = generateToken(user);
                 await user.update({ device_token : device_token , device_id:device_id });
