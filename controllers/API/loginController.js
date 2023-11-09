@@ -1,8 +1,8 @@
-const db = require('../../../models');
+const db = require('../../models');
 const User = db.User;
 const Expert = db.Expert;
 const jwt = require('jsonwebtoken');
-// const twilio = require('twilio')(process.env.twilioAccountSid, process.env.twilioAuthToken);
+const twilio = require('twilio')(process.env.twilioAccountSid, process.env.twilioAuthToken);
 
 const generateToken = (user) => {
     const secretKey = process.env.JWT_SECRET;
@@ -36,11 +36,11 @@ module.exports = {
                 mess = created ? user_type+' created and OTP sent' : 'OTP sent';
                 userdata = user;
             }
-            // twilio.messages.create({
-            //     body: 'Your OTP is '+otp,
-            //     from: '+12563644502',
-            //     to: mobile
-            // })
+            twilio.messages.create({
+                body: 'Your OTP is '+otp,
+                from: '+12563644502',
+                to: mobile
+            })
             res.json({
                 message: mess,
                 user: {
