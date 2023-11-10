@@ -39,5 +39,8 @@ protectedRouter.get('/task-details', categoryController.task_details);
 protectedRouter.get('/booking', categoryController.booking);
 protectedRouter.get('/booking-details', categoryController.booking_details);
 protectedRouter.get('/expert-list', categoryController.expert_list);
+protectedRouter.get('/expert-profile', categoryController.expert_profile);
+protectedRouter.get('/expert-chat', categoryController.expert_chat);
+protectedRouter.post('/expert-message', categoryController.expert_message);
 
 module.exports = protectedRouter;

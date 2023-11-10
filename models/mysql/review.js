@@ -1,28 +1,24 @@
 const { Model, DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
-  class Category extends Model {}
+  class Review extends Model {}
 
-  Category.init({
+  Review.init({
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true
     },
-    category_name: {
-      type: DataTypes.STRING(55),
+    uid: {
+      type: DataTypes.INTEGER,
       allowNull: true
     },
-    category_img: {
+    rating: {
+      type: DataTypes.FLOAT,
+      allowNull: true
+    },
+    message: {
       type: DataTypes.TEXT,
-      allowNull: true
-    },
-    parent_id: {
-      type: DataTypes.INTEGER,
-      allowNull: true
-    },
-    category_type: {
-      type: DataTypes.INTEGER,
       allowNull: true
     },
     created_at: {
@@ -37,11 +33,11 @@ module.exports = (sequelize) => {
     }
   }, {
     sequelize,
-    modelName: 'Category',
-    tableName: 'category',
+    modelName: 'Review',
+    tableName: 'review',
     timestamps: false,
     underscored: true
   });
 
-  return Category;
+  return Review;
 };

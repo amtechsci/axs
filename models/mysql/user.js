@@ -46,6 +46,14 @@ module.exports = (sequelize) => {
       type: DataTypes.TEXT,
       allowNull: true,
     },
+    user_type: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    rating: {
+      type: DataTypes.FLOAT,
+      allowNull: true,
+    },
     created_at: {
       type: DataTypes.DATE,
       allowNull: false,

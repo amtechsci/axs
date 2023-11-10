@@ -13,6 +13,10 @@ module.exports = (sequelize) => {
       type: DataTypes.INTEGER,
       allowNull: true
     },
+    expert_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true
+    },
     cid: {
       type: DataTypes.INTEGER,
       allowNull: true
