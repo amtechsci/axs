@@ -79,7 +79,7 @@ module.exports = {
         } catch (error) {
             console.error('Error in setup_profile:', error);
             res.status(500).send({
-                message: 'Internal Server Error ' + error.message
+                message: 'Internal Server Error ' + error
             });
         }
     },
