@@ -30,6 +30,7 @@ module.exports = {
                 to: mobile
             })
             res.json({
+                flag:true,
                 message: mess,
                 user: {
                     id: userdata.id,
@@ -39,6 +40,7 @@ module.exports = {
         } catch (error) {
             console.error('Error in login:', error);
             res.status(500).send({
+                flag:false,
                 message: 'Internal Server Error'+error
             });
         }
@@ -53,6 +55,7 @@ module.exports = {
                 await user.update({ device_token : device_token , device_id:device_id });
                 let new_user = user.name ? 0 : 1;
                 res.json({
+                    flag:true,
                     message: 'Login success',
                     user: {
                         id: user.id,
@@ -67,6 +70,7 @@ module.exports = {
                 });
             } else {
                 res.status(404).send({
+                    flag:false,
                     message: 'User not found or OTP incorrect'
                 });
             }
@@ -88,6 +92,7 @@ module.exports = {
                 await user.update({ otp });
             }else{
                 res.status(404).send({
+                    flag:false,
                     message: 'User not found'
                 });
             }
@@ -97,6 +102,7 @@ module.exports = {
                 to: mobile
             })
             res.json({
+                flag:true,
                 message: 'OTP sent',
                 user: {
                     id: user.id,
@@ -120,6 +126,7 @@ module.exports = {
                 await user.update({ device_token : device_token , device_id:device_id });
                 let new_user = 1;
                 res.json({
+                    flag:true,
                     message: 'Login success',
                     user: {
                         id: user.id,
@@ -134,6 +141,7 @@ module.exports = {
                 });
             } else {
                 res.status(404).send({
+                    flag:false,
                     message: 'User not found or OTP incorrect'
                 });
             }
