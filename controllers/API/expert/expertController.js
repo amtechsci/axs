@@ -1,8 +1,8 @@
 const db = require('../../../models');
 const User = db.User;
-const Preference = db.Preference;
-const Get_subscription = db.Get_subscription;
-const User_subscription = db.User_subscription;
+const Expert_chat = require('../../../models/mongo/expert_chat');
+const Task = db.Task;
+const Review = db.Review;
 
 module.exports = {
     create_pin: async (req, res) => {
@@ -66,89 +66,42 @@ module.exports = {
         try {
             const userId = req.user.id;
             const user = await User.findByPk(userId);
-            if (!user) {
-                return res.status(404).send({ message: "User not found" });
-            }
-            const { name, email, gender } = req.body;
-            user.name = name;
-            user.email = email;
-            user.gender = gender;
-            await user.save();
-            res.status(200).send({
-                flag:true,
-                message: "Profile updated successfully",
-            });
-
-        } catch (error) {
-            console.error('Error in setup_profile:', error);
-            res.status(500).send({
-                flag:false,
-                message: 'Internal Server Error ' + error.message
-            });
-        }
-    },
-    update_profile_image: async (req, res) => {
-        try {
-            const userId = req.user.id;
-            const user = await User.findByPk(userId);
-            if (!user) {
-                return res.status(404).send({ message: "User not found" });
-            }
-            if (req.file && req.file.path) {
-                console.log(req.file);
-                user.profile_img = req.file.path;
-                await user.save();
-                res.status(200).send({
+            if (!user) { return res.status(404).json({flag:false, message: "User not found" }); }
+            const { pin } = req.body;
+            if(user.pin == pin){
+                res.status(200).json({
                     flag:true,
-                    message: "Profile image updated successfully",
+                    message: "Pin match",
                 });
-            } else {
-                res.status(400).send({flag:false, message: "No image file provided" });
-            }
-        } catch (error) {
-            console.error('Error in setup_profile:', error);
-            res.status(500).send({
-                flag:false,
-                message: 'Internal Server Error ' + error
-            });
-        }
-    },
-    add_preferences: async (req, res) => {
-        try {
-            const userId = req.user.id;
-            const user = await User.findByPk(userId);
-            if (!user) {
-                return res.status(404).send({ message: "User not found" });
-            }
-            const { cid } = req.body;
-            const catIds = cid.split(',').map(cat_id => ({ uid: user.id, cid: Number(cat_id) }));
-            await Preference.bulkCreate(catIds);
-            res.status(200).send({
-                flag:true,
-                message: "Preferences updated successfully",
-            });
-
-        } catch (error) {
-            console.error('Error in setup_profile:', error);
-            res.status(500).send({
-                flag:false,
-                message: 'Internal Server Error ' + error.message
-            });
-        }
-    },
-    get_user: async (req, res) => {
-        try {
-            const userId = req.user.id;
-            const user = await User.findByPk(userId);
-            if (!user) {
-                return res.status(404).send({ message: "User not found" });
             }else{
-                res.status(200).send({
-                    flag:true,
-                    message: "User data successfully",
-                    user
+                res.status(200).json({
+                    flag:false,
+                    message: "Pin not match",
                 });
             }
+        } catch (error) {
+            console.error('Error in create_pin:', error);
+            res.status(500).json({
+                flag:false,
+                message: 'Internal Server Error ' + error.message
+            });
+        }
+    },
+    task: async (req, res) => {
+        try {
+            const userId = req.user.id;
+            const user = await User.findByPk(userId);
+            if (!user) {
+                return res.status(404).send({ message: "User not found" });
+            }
+            const task = await Task.findAll({
+                where:{expert_id:userId}
+            });
+            res.status(200).send({
+                flag:true,
+                message: "Task fetch successfully",
+                task
+            });
         } catch (error) {
             console.error('Error in setup_profile:', error);
             res.status(500).send({
@@ -157,29 +110,23 @@ module.exports = {
             });
         }
     },
-    user_current_subscription: async (req, res) => {
+    task_details: async (req, res) => {
         try {
             const userId = req.user.id;
             const user = await User.findByPk(userId);
             if (!user) {
                 return res.status(404).send({ message: "User not found" });
             }
-            const user_subscription = await User_subscription.findOne({
+            const { tid } = req.query;
+            const task = await Task.findAll({
                 where: {
-                    uid: userId,
-                    status: 1
-                },
-                include: [{
-                    model: Get_subscription,
-                    as: 'get_subscription',
-                    attributes: ['plan_name', 'plan_description', 'plan_type'],
-                }],
-                attributes: ['validity_till', 'status', 'created_at', 'updated_at']
-            });            
+                    id: tid
+                }
+            });
             res.status(200).send({
                 flag:true,
-                message: "Subscription fetch successfully",
-                user_subscription
+                message: "Task fetch successfully",
+                task
             });
         } catch (error) {
             console.error('Error in setup_profile:', error);

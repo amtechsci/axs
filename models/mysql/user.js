@@ -30,6 +30,10 @@ module.exports = (sequelize) => {
       type: DataTypes.TEXT,
       allowNull: true
     },
+    description: {
+      type: DataTypes.TEXT,
+      allowNull: true
+    },
     otp: {
       type: DataTypes.INTEGER,
       allowNull: true,
@@ -53,6 +57,11 @@ module.exports = (sequelize) => {
     rating: {
       type: DataTypes.FLOAT,
       allowNull: true,
+    },
+    status: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      defaultValue:1
     },
     created_at: {
       type: DataTypes.DATE,

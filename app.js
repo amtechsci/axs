@@ -35,8 +35,10 @@ mongoose.connection.on('error', (err) => {
 // Routes
 const loginRouter = require('./routes/API/loginRouter');
 const userRouter = require('./routes/API/user/userRouter');
+const expertRouter = require('./routes/API/expert/expertRouter');
 app.use('/api', loginRouter);
 app.use('/api/user', userRouter);
+app.use('/api/expert', expertRouter);
 
 // Start the Server
 const PORT = process.env.PORT || 3000;

@@ -13,7 +13,7 @@ module.exports = (sequelize) => {
       type: DataTypes.INTEGER,
       allowNull: true
     },
-    exp_id: {
+    experience_id: {
       type: DataTypes.INTEGER,
       allowNull: true
     },
@@ -45,7 +45,7 @@ module.exports = (sequelize) => {
   });
   Booking.associate = (models) => {
     Booking.belongsTo(models.Experience, {
-      foreignKey: 'exp_id',
+      foreignKey: 'experience_id',
       as: 'experience'
     });
   };

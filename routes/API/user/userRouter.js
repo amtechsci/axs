@@ -2,6 +2,7 @@ const express = require('express');
 const authMiddleware = require('../../../middlewares/authMiddleware');
 const userController = require('../../../controllers/API/user/userController');
 const categoryController = require('../../../controllers/API/user/categoryController');
+const expertController = require('../../../controllers/API/user/expertController');
 const path = require('path');
 const multer = require('multer');
 
@@ -20,6 +21,7 @@ protectedRouter.use(authMiddleware);
 
 
 protectedRouter.post('/create-pin', userController.create_pin);
+protectedRouter.post('/pin-login', userController.pin_login);
 protectedRouter.post('/setup-profile', userController.setup_profile);
 protectedRouter.post('/update-profile-image', upload.single('profile_img'), userController.update_profile_image);
 protectedRouter.get('/category', categoryController.category);
@@ -38,9 +40,9 @@ protectedRouter.get('/task', categoryController.task);
 protectedRouter.get('/task-details', categoryController.task_details);
 protectedRouter.get('/booking', categoryController.booking);
 protectedRouter.get('/booking-details', categoryController.booking_details);
-protectedRouter.get('/expert-list', categoryController.expert_list);
-protectedRouter.get('/expert-profile', categoryController.expert_profile);
-protectedRouter.get('/expert-chat', categoryController.expert_chat);
-protectedRouter.post('/expert-message', categoryController.expert_message);
+protectedRouter.get('/expert-list', expertController.expert_list);
+protectedRouter.get('/expert-profile', expertController.expert_profile);
+protectedRouter.get('/expert-chat', expertController.expert_chat);
+protectedRouter.post('/expert-message', expertController.expert_message);
 
 module.exports = protectedRouter;
