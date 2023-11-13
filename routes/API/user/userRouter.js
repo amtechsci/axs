@@ -3,22 +3,10 @@ const authMiddleware = require('../../../middlewares/authMiddleware');
 const userController = require('../../../controllers/API/user/userController');
 const categoryController = require('../../../controllers/API/user/categoryController');
 const expertController = require('../../../controllers/API/user/expertController');
-const path = require('path');
-const multer = require('multer');
+const { upload } = require('../../../config/aws-bucket');
 
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'public/uploads/');
-    },
-    filename: function (req, file, cb) {
-        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
-    }
-  });
-  const upload = multer({ storage: storage });
 const protectedRouter = express.Router();
 protectedRouter.use(authMiddleware);
-
-
 
 protectedRouter.post('/create-pin', userController.create_pin);
 protectedRouter.post('/pin-login', userController.pin_login);

@@ -96,34 +96,18 @@ module.exports = {
             if (!user) {
                 return res.status(404).send({ message: "User not found" });
             }
+    
             if (req.file) {
-                const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
-                const mimeType = req.file.mimetype;
-                if (!allowedTypes.includes(mimeType)) {
-                    res.status(400).send({flag: false, message: "Unsupported file type" });
-                    return;
-                }
-                const key = `profile_images/${userId}/${req.file.originalname}`;
-            
-                uploadFile(req.file.path, key, mimeType)
-                  .then(data => {
-                    user.profile_img = data.Location;
-                    return user.save();
-                  })
-                  .then(() => {
-                    res.status(200).send({
-                      flag: true,
-                      message: "Profile image updated successfully",
-                    });
-                  })
-                  .catch(error => {
-                    console.error('Error in file upload:', error);
-                    res.status(500).send({
-                      flag: false,
-                      message: 'Error uploading file'
-                    });
-                  });
-              } else {
+                // Directly use the URL provided by multer-s3
+                // The URL of the uploaded file is available in req.file.location
+                user.profile_img = req.file.location;
+                await user.save();
+    
+                res.status(200).send({
+                    flag: true,
+                    message: "Profile image updated successfully",
+                });
+            } else {
                 res.status(400).send({ flag: false, message: "No image file provided" });
             }
         } catch (error) {
@@ -133,7 +117,7 @@ module.exports = {
                 message: 'Internal Server Error ' + error
             });
         }
-    },
+    },    
     add_preferences: async (req, res) => {
         try {
             const userId = req.user.id;

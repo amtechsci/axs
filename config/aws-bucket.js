@@ -1,39 +1,34 @@
-const AWS = require('aws-sdk');
-AWS.config.update({
-  accessKeyId: 'AKIA6NC7FWQ2RIQX6RXM',
-  secretAccessKey: 'mWQkuYJhQ0G30VmWHaXEWLjGWMc6iSVrMhJl9X5b',
-  region: 'ap-south-1' // e.g., 'us-west-2'
+const { S3Client } = require("@aws-sdk/client-s3");
+const multer = require('multer');
+const multerS3 = require('multer-s3');
+
+// Configure AWS SDK v3 S3 Client
+const s3Client = new S3Client({
+  region: process.env.AWS_REGION, // 'ap-south-1'
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID, // Ensure these are set in your environment
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+  }
 });
 
-const s3 = new AWS.S3();
+// Configure multer to use multer-s3 for uploading directly to S3
+const upload = multer({
+  fileFilter: function (req, file, cb) {
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+    if (!allowedTypes.includes(file.mimetype)) {
+        return cb(new Error('Unsupported file type'), false);
+    }
+    cb(null, true);
+  },
+  storage: multerS3({
+    s3: s3Client,
+    bucket: 'assetsaxs',
+    contentType: multerS3.AUTO_CONTENT_TYPE, // Auto-detect content type
+    key: function (req, file, cb) {
+      const key = `profile_images/${Date.now().toString()}-${file.originalname}`;
+      cb(null, key);
+    }
+  })
+});
 
-const fs = require('fs');
-
-const uploadFile = (filePath, key, mimeType) => {
-  return new Promise((resolve, reject) => {
-    fs.readFile(filePath, (err, fileContent) => {
-      if (err) {
-        reject(err);
-        return;
-      }
-
-      const params = {
-        Bucket: 'assetsaxs', // Replace with your bucket name
-        Key: key,
-        Body: fileContent,
-        ContentType: mimeType,
-        // ACL: 'public-read'
-      };
-
-      s3.upload(params, function(err, data) {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(data);
-        }
-      });
-    });
-  });
-};
-
-module.exports = { uploadFile };
+module.exports = { upload };
