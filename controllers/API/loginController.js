@@ -13,7 +13,7 @@ module.exports = {
     login: async (req, res) => {
         try {
             const { mobile,user_type } = req.body;
-            otp = 1111;
+            otp = 111111;
             let mess,userdata;
                 const [user, created] = await User.findOrCreate({
                     where: { mobile,user_type },
@@ -84,7 +84,7 @@ module.exports = {
     forgot_pin: async (req, res) => {
         try {
             const { mobile,user_type } = req.body;
-            otp = 1111;
+            otp = 111111;
             const user = await User.findOne({
                     where: { mobile,user_type }
                 });
