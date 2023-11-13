@@ -1,36 +1,24 @@
 const { Model, DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
-  class Get_subscription extends Model {}
+  class Expert_documents extends Model {}
 
-  Get_subscription.init({
+  Expert_documents.init({
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true
     },
-    plan_name: {
-      type: DataTypes.STRING(55),
+    uid: {
+      type: DataTypes.INTEGER,
       allowNull: true
     },
-    plan_description: {
-      type: DataTypes.TEXT,
+    document_name: {
+      type: DataTypes.STRING(155),
       allowNull: true
     },
-    plan_type: {
-      type: DataTypes.STRING(55),
-      allowNull: true
-    },
-    validity: {
-      type: DataTypes.STRING(10),
-      allowNull: true
-    },
-    price: {
-      type: DataTypes.STRING(7),
-      allowNull: true
-    },
-    feature: {
-      type: DataTypes.TEXT,
+    document_file: {
+      type: DataTypes.STRING(155),
       allowNull: true
     },
     created_at: {
@@ -45,11 +33,11 @@ module.exports = (sequelize) => {
     }
   }, {
     sequelize,
-    modelName: 'Get_subscription',
-    tableName: 'get_subscription',
+    modelName: 'Expert_documents',
+    tableName: 'expert_documents',
     timestamps: false,
     underscored: true
   });
 
-  return Get_subscription;
+  return Expert_documents;
 };

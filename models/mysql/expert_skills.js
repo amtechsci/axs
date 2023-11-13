@@ -1,36 +1,24 @@
 const { Model, DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
-  class Get_subscription extends Model {}
+  class Expert_skills extends Model {}
 
-  Get_subscription.init({
+  Expert_skills.init({
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true
     },
-    plan_name: {
-      type: DataTypes.STRING(55),
+    uid: {
+      type: DataTypes.INTEGER,
       allowNull: true
     },
-    plan_description: {
-      type: DataTypes.TEXT,
+    cid: {
+      type: DataTypes.INTEGER,
       allowNull: true
     },
-    plan_type: {
-      type: DataTypes.STRING(55),
-      allowNull: true
-    },
-    validity: {
-      type: DataTypes.STRING(10),
-      allowNull: true
-    },
-    price: {
-      type: DataTypes.STRING(7),
-      allowNull: true
-    },
-    feature: {
-      type: DataTypes.TEXT,
+    experience: {
+      type: DataTypes.STRING(25),
       allowNull: true
     },
     created_at: {
@@ -45,11 +33,11 @@ module.exports = (sequelize) => {
     }
   }, {
     sequelize,
-    modelName: 'Get_subscription',
-    tableName: 'get_subscription',
+    modelName: 'Expert_skills',
+    tableName: 'expert_skills',
     timestamps: false,
     underscored: true
   });
 
-  return Get_subscription;
+  return Expert_skills;
 };

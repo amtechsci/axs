@@ -64,5 +64,12 @@ module.exports = (sequelize) => {
     underscored: true
   });
 
+  Task.associate = (models) => {
+    Task.belongsTo(models.Category, {
+      foreignKey: 'cid',
+      as: 'category'
+    });
+  };
+
   return Task;
 };

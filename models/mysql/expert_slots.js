@@ -1,36 +1,32 @@
 const { Model, DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
-  class Get_subscription extends Model {}
+  class Expert_slots extends Model {}
 
-  Get_subscription.init({
+  Expert_slots.init({
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true
     },
-    plan_name: {
-      type: DataTypes.STRING(55),
+    uid: {
+      type: DataTypes.INTEGER,
       allowNull: true
     },
-    plan_description: {
-      type: DataTypes.TEXT,
+    sub_id: {
+      type: DataTypes.INTEGER,
       allowNull: true
     },
-    plan_type: {
-      type: DataTypes.STRING(55),
+    purchase_date: {
+      type: DataTypes.DATE,
       allowNull: true
     },
-    validity: {
-      type: DataTypes.STRING(10),
+    validity_till: {
+      type: DataTypes.DATE,
       allowNull: true
     },
-    price: {
-      type: DataTypes.STRING(7),
-      allowNull: true
-    },
-    feature: {
-      type: DataTypes.TEXT,
+    status: {
+      type: DataTypes.INTEGER,
       allowNull: true
     },
     created_at: {
@@ -45,11 +41,18 @@ module.exports = (sequelize) => {
     }
   }, {
     sequelize,
-    modelName: 'Get_subscription',
-    tableName: 'get_subscription',
+    modelName: 'Expert_slots',
+    tableName: 'expert_slots',
     timestamps: false,
     underscored: true
   });
 
-  return Get_subscription;
+  Expert_slots.associate = (models) => {
+    Expert_slots.belongsTo(models.User, {
+      foreignKey: 'expert_id',
+      as: 'user'
+    });
+  };
+
+  return Expert_slots;
 };

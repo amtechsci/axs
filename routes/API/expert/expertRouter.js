@@ -1,17 +1,7 @@
 const express = require('express');
 const authMiddleware = require('../../../middlewares/authMiddleware');
 const expertController = require('../../../controllers/API/expert/expertController');
-const path = require('path');
-const multer = require('multer');
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'public/uploads/');
-    },
-    filename: function (req, file, cb) {
-        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
-    }
-  });
-  const upload = multer({ storage: storage });
+const { upload } = require('../../../config/aws-bucket');
 const protectedRouter = express.Router();
 protectedRouter.use(authMiddleware);
 
@@ -19,10 +9,12 @@ protectedRouter.use(authMiddleware);
 
 protectedRouter.post('/create-pin', expertController.create_pin);
 protectedRouter.post('/pin-login', expertController.pin_login);
+protectedRouter.post('/update-document', upload.single('document_file'), expertController.update_document);
 protectedRouter.post('/setup-profile', expertController.setup_profile);
-// protectedRouter.post('/update-profile-image', upload.single('profile_img'), expertController.update_profile_image);
+protectedRouter.get('/get-user', expertController.get_user);
 protectedRouter.get('/task', expertController.task);
 protectedRouter.get('/task-details', expertController.task_details);
+protectedRouter.post('/expert-slots', expertController.expert_slots);
 
 
 module.exports = protectedRouter;

@@ -9,6 +9,7 @@ const Experience = db.Experience;
 const Task = db.Task;
 const Booking = db.Booking;
 const Review = db.Review;
+const Plan_features = db.Plan_features;
 
 module.exports = {
     category: async (req, res) => {
@@ -108,20 +109,43 @@ module.exports = {
             if (!user) {
                 return res.status(404).send({ message: "User not found" });
             }
-            const get_subscription = await Get_subscription.findAll();
+    
+            const subscriptions = await Get_subscription.findAll();
+            const plan_features = await Plan_features.findAll({
+                attributes: ['id','title']
+            });
+    
+            // Grouping subscriptions by plan_type
+            const groupedSubscriptions = subscriptions.reduce((acc, item) => {
+                // Use plan_type as the key
+                const key = item.plan_type;
+    
+                // Initialize the array if not already
+                if (!acc[key]) {
+                    acc[key] = [];
+                }
+    
+                // Add the current item to its respective group
+                acc[key].push(item);
+    
+                return acc;
+            }, {});
+    
             res.status(200).send({
-                flag:true,
+                flag: true,
                 message: "Subscription fetch successfully",
-                get_subscription
+                subscriptions: groupedSubscriptions,
+                "features":plan_features
             });
         } catch (error) {
-            console.error('Error in setup_profile:', error);
+            console.error('Error in get_subscription:', error);
             res.status(500).send({
-                flag:false,
+                flag: false,
                 message: 'Internal Server Error ' + error.message
             });
         }
     },
+    
     recommendations: async (req, res) => {
         try {
             const userId = req.user.id;

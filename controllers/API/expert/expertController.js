@@ -3,6 +3,10 @@ const User = db.User;
 const Expert_chat = require('../../../models/mongo/expert_chat');
 const Task = db.Task;
 const Review = db.Review;
+const Expert_documents = db.Expert_documents;
+const Category = db.Category;
+const Expert_skills = db.Expert_skills;
+const Expert_slots = db.Expert_slots;
 
 module.exports = {
     create_pin: async (req, res) => {
@@ -62,26 +66,74 @@ module.exports = {
             });
         }
     },
+    update_document: async (req, res) => {
+        try {
+            const userId = req.user.id;
+            const user = await User.findByPk(userId);
+            if (!user) {
+                return res.status(404).send({ message: "User not found" });
+            }
+            if (req.file) {
+                const { document_name } = req.body;
+                document_file = req.file.location;
+                await Expert_documents.create({"uid":user.id,document_name,document_file});
+                res.status(200).send({
+                    flag: true,
+                    message: "Document updated successfully",
+                });
+            } else {
+                res.status(400).send({ flag: false, message: "No document file provided" });
+            }
+        } catch (error) {
+            console.error('Error in update_profile_image:', error);
+            res.status(500).send({
+                flag: false,
+                message: 'Internal Server Error ' + error
+            });
+        }
+    },
+    get_user: async (req, res) => {
+        try {
+            const userId = req.user.id;
+            const user = await User.findByPk(userId);
+            if (!user) {
+                return res.status(404).send({ message: "User not found" });
+            }else{
+                res.status(200).send({
+                    flag:true,
+                    message: "User data successfully",
+                    user
+                });
+            }
+        } catch (error) {
+            console.error('Error in setup_profile:', error);
+            res.status(500).send({
+                flag:false,
+                message: 'Internal Server Error ' + error.message
+            });
+        }
+    },
     setup_profile: async (req, res) => {
         try {
             const userId = req.user.id;
             const user = await User.findByPk(userId);
-            if (!user) { return res.status(404).json({flag:false, message: "User not found" }); }
-            const { pin } = req.body;
-            if(user.pin == pin){
-                res.status(200).json({
-                    flag:true,
-                    message: "Pin match",
-                });
-            }else{
-                res.status(200).json({
-                    flag:false,
-                    message: "Pin not match",
-                });
+            if (!user) {
+                return res.status(404).send({ message: "User not found" });
             }
+            const { name, description, gender, category_id, experience } = req.body;
+            user.name = name;
+            user.description = description;
+            user.gender = gender;
+            await user.save();
+            await Expert_skills.create({"uid":userId,"cid":category_id,"experience":experience});
+            res.status(200).send({
+                flag:true,
+                message: "Profile updated successfully",
+            });
+
         } catch (error) {
-            console.error('Error in create_pin:', error);
-            res.status(500).json({
+            console.error('Error in setup_profile:', error);
+            res.status(500).send({
                 flag:false,
                 message: 'Internal Server Error ' + error.message
             });
@@ -134,6 +186,22 @@ module.exports = {
                 flag:false,
                 message: 'Internal Server Error ' + error.message
             });
+        }
+    },
+    expert_slots: async (req, res) => {
+        try {
+            const { expert_id, day_of_week, start_time, end_time, is_active } = req.body;
+            const newSlot = await Expert_slots.create({
+                expert_id,
+                day_of_week,
+                start_time,
+                end_time,
+                is_active
+            });
+            res.status(201).send({ message: 'Availability slot created successfully', newSlot });
+        } catch (error) {
+            console.error('Error in creating availability slot:', error);
+            res.status(500).send({ message: 'Internal Server Error' });
         }
     },
 };
