@@ -10,7 +10,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 const path = require('path');
 const db = require('./models');
-const { mongoose } = require('./config/db');
+const { mongoose } = require('./config/mongo');
 
 
 // Serve static files

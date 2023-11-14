@@ -15,6 +15,10 @@ protectedRouter.get('/get-user', expertController.get_user);
 protectedRouter.get('/task', expertController.task);
 protectedRouter.get('/task-details', expertController.task_details);
 protectedRouter.post('/expert-slots', expertController.expert_slots);
+protectedRouter.get('/task-analytics', expertController.task_analytics);
+protectedRouter.get('/today-appointment', expertController.today_appointment);
+protectedRouter.post('/add-bank-account', expertController.add_bank_account);
+protectedRouter.get('/get-bank-account', expertController.get_bank_account);
 
 
 module.exports = protectedRouter;

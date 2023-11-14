@@ -1,31 +1,35 @@
 const { Model, DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
-  class Expert_slots extends Model {}
+  class Expert_bank_account extends Model {}
 
-  Expert_slots.init({
+  Expert_bank_account.init({
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true
     },
-    expert_id : {
+    expert_id: {
       type: DataTypes.INTEGER,
       allowNull: true
     },
-    date: {
+    bank_name: {
+      type: DataTypes.STRING(155),
+      allowNull: true
+    },
+    account_number: {
+      type: DataTypes.STRING(25),
+      allowNull: true
+    },
+    account_holder_name: {
+      type: DataTypes.STRING(155),
+      allowNull: true
+    },
+    ifsc_code: {
       type: DataTypes.STRING(15),
       allowNull: true
     },
-    start_time: {
-      type: DataTypes.TIME,
-      allowNull: true
-    },
-    end_time: {
-      type: DataTypes.TIME,
-      allowNull: true
-    },
-    is_active: {
+    status: {
       type: DataTypes.INTEGER,
       allowNull: true
     },
@@ -41,18 +45,18 @@ module.exports = (sequelize) => {
     }
   }, {
     sequelize,
-    modelName: 'Expert_slots',
-    tableName: 'expert_slots',
+    modelName: 'Expert_bank_account',
+    tableName: 'expert_bank_account',
     timestamps: false,
     underscored: true
   });
 
-  Expert_slots.associate = (models) => {
-    Expert_slots.belongsTo(models.User, {
+  Expert_bank_account.associate = (models) => {
+    Expert_bank_account.belongsTo(models.User, {
       foreignKey: 'expert_id',
       as: 'user'
     });
   };
 
-  return Expert_slots;
+  return Expert_bank_account;
 };

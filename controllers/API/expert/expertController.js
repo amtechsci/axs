@@ -7,6 +7,10 @@ const Expert_documents = db.Expert_documents;
 const Category = db.Category;
 const Expert_skills = db.Expert_skills;
 const Expert_slots = db.Expert_slots;
+const Expert_bank_account = db.Expert_bank_account;
+const Sequelize = require('sequelize');
+const Op = Sequelize.Op;
+const moment = require('moment');
 
 module.exports = {
     create_pin: async (req, res) => {
@@ -139,6 +143,62 @@ module.exports = {
             });
         }
     },
+    task_analytics: async (req, res) => {
+        try {
+            const userId = req.user.id;
+            const user = await User.findByPk(userId);
+            if (!user) {
+                return res.status(404).send({ message: "User not found" });
+            }
+            const taskCountByStatus = await Task.findAll({
+                attributes: ['status', [Sequelize.fn('COUNT', Sequelize.col('id')), 'taskCount']],
+                where: { expert_id:userId },
+                group: ['status']
+            });            
+            res.status(200).send({
+                flag:true,
+                message: "Task fetch successfully",
+                taskCountByStatus
+            });
+        } catch (error) {
+            console.error('Error in setup_profile:', error);
+            res.status(500).send({
+                flag:false,
+                message: 'Internal Server Error ' + error.message
+            });
+        }
+    },
+    today_appointment: async (req, res) => {
+        try {
+            const userId = req.user.id;
+            const user = await User.findByPk(userId);
+            if (!user) {
+                return res.status(404).send({ message: "User not found" });
+            }
+            const todayStart = moment().startOf('day').toDate();
+            const todayEnd = moment().endOf('day').toDate();
+            const task = await Task.findAll({
+                where: {
+                    expert_id: userId,
+                    updated_at: {
+                        [Op.gte]: todayStart, // Greater than or equal to the start of today
+                        [Op.lte]: todayEnd   // Less than or equal to the end of today
+                    }
+                }
+            });
+            res.status(200).send({
+                flag:true,
+                message: "Task fetch successfully",
+                task
+            });
+        } catch (error) {
+            console.error('Error in setup_profile:', error);
+            res.status(500).send({
+                flag:false,
+                message: 'Internal Server Error ' + error.message
+            });
+        }
+    },
     task: async (req, res) => {
         try {
             const userId = req.user.id;
@@ -190,18 +250,43 @@ module.exports = {
     },
     expert_slots: async (req, res) => {
         try {
-            const { expert_id, day_of_week, start_time, end_time, is_active } = req.body;
+            const { expert_id, date, start_time, end_time, is_active } = req.body;
             const newSlot = await Expert_slots.create({
                 expert_id,
-                day_of_week,
+                date,
                 start_time,
                 end_time,
                 is_active
             });
-            res.status(201).send({ message: 'Availability slot created successfully', newSlot });
+            res.status(201).send({flag:true, message: 'Availability slot created successfully', newSlot });
         } catch (error) {
             console.error('Error in creating availability slot:', error);
-            res.status(500).send({ message: 'Internal Server Error' });
+            res.status(500).send({flag:false, message: 'Internal Server Error' });
+        }
+    },
+    add_bank_account: async (req, res) => {
+        try {
+            const { expert_id, bank_name, account_holder_name, account_number, ifsc_code } = req.body;
+            const newAccount = await Expert_bank_account.create({
+                expert_id,
+                bank_name, account_holder_name, account_number, ifsc_code
+            });
+            res.status(201).send({flag:true, message: 'Bank account added successfully', newAccount });
+        } catch (error) {
+            console.error('Error in creating availability slot:', error);
+            res.status(500).send({flag:false, message: 'Internal Server Error' });
+        }
+    },
+    get_bank_account: async (req, res) => {
+        try {
+            const { expert_id } = req.query;
+            const accounts = await Expert_bank_account.findAll({
+                where:{expert_id}
+            });
+            res.status(200).send({flag:true, message: 'Bank account fetch successfully', accounts });
+        } catch (error) {
+            console.error('Error in creating availability slot:', error);
+            res.status(500).send({flag:false, message: 'Internal Server Error' });
         }
     },
 };
