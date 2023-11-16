@@ -8,6 +8,7 @@ const Category = db.Category;
 const Expert_skills = db.Expert_skills;
 const Expert_slots = db.Expert_slots;
 const Expert_bank_account = db.Expert_bank_account;
+const Withdraw = db.Withdraw;
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 const moment = require('moment');
@@ -117,6 +118,27 @@ module.exports = {
             });
         }
     },
+    wallet: async (req, res) => {
+        try {
+            const userId = req.user.id;
+            const user = await User.findByPk(userId);
+            if (!user) {
+                return res.status(404).send({ message: "User not found" });
+            }else{
+                res.status(200).send({
+                    flag:true,
+                    message: "User data successfully",
+                    "wallet":user.wallet
+                });
+            }
+        } catch (error) {
+            console.error('Error in setup_profile:', error);
+            res.status(500).send({
+                flag:false,
+                message: 'Internal Server Error ' + error.message
+            });
+        }
+    },
     setup_profile: async (req, res) => {
         try {
             const userId = req.user.id;
@@ -137,6 +159,32 @@ module.exports = {
 
         } catch (error) {
             console.error('Error in setup_profile:', error);
+            res.status(500).send({
+                flag:false,
+                message: 'Internal Server Error ' + error.message
+            });
+        }
+    },
+    edit_profile: async (req, res) => {
+        try {
+            const userId = req.user.id;
+            const user = await User.findByPk(userId);
+            if (!user) {
+                return res.status(404).send({ message: "User not found" });
+            }
+            const { name, email, mobile, address } = req.body;
+            user.name = name;
+            user.email = email;
+            user.mobile = mobile;
+            user.address = address;
+            await user.save();
+            res.status(200).send({
+                flag:true,
+                message: "Profile updated successfully",
+            });
+
+        } catch (error) {
+            console.error('Error in edit_profile:', error);
             res.status(500).send({
                 flag:false,
                 message: 'Internal Server Error ' + error.message
@@ -265,6 +313,32 @@ module.exports = {
         }
     },
     add_bank_account: async (req, res) => {
+        try {
+            const { expert_id, bank_name, account_holder_name, account_number, ifsc_code } = req.body;
+            const newAccount = await Expert_bank_account.create({
+                expert_id,
+                bank_name, account_holder_name, account_number, ifsc_code
+            });
+            res.status(201).send({flag:true, message: 'Bank account added successfully', newAccount });
+        } catch (error) {
+            console.error('Error in creating availability slot:', error);
+            res.status(500).send({flag:false, message: 'Internal Server Error' });
+        }
+    },
+    withdraw_request: async (req, res) => {
+        try {
+            const { expert_id, bank_name, account_holder_name, account_number, ifsc_code } = req.body;
+            const newAccount = await Withdraw.create({
+                expert_id,
+                bank_name, account_holder_name, account_number, ifsc_code
+            });
+            res.status(201).send({flag:true, message: 'Bank account added successfully', newAccount });
+        } catch (error) {
+            console.error('Error in creating availability slot:', error);
+            res.status(500).send({flag:false, message: 'Internal Server Error' });
+        }
+    },
+    withdraw: async (req, res) => {
         try {
             const { expert_id, bank_name, account_holder_name, account_number, ifsc_code } = req.body;
             const newAccount = await Expert_bank_account.create({

@@ -32,5 +32,6 @@ protectedRouter.get('/expert-list', expertController.expert_list);
 protectedRouter.get('/expert-profile', expertController.expert_profile);
 protectedRouter.get('/expert-chat', expertController.expert_chat);
 protectedRouter.post('/expert-message', expertController.expert_message);
+protectedRouter.post('/add-expert-review', expertController.add_review);
 
 module.exports = protectedRouter;

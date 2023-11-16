@@ -1,9 +1,9 @@
 const { Model, DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
-  class Review extends Model {}
+  class Withdraw extends Model {}
 
-  Review.init({
+  Withdraw.init({
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
@@ -13,20 +13,16 @@ module.exports = (sequelize) => {
       type: DataTypes.INTEGER,
       allowNull: true
     },
-    expert_id: {
+    cid: {
       type: DataTypes.INTEGER,
       allowNull: true
     },
-    task_id: {
-      type: DataTypes.INTEGER,
+    experience: {
+      type: DataTypes.STRING(25),
       allowNull: true
     },
-    rating: {
-      type: DataTypes.FLOAT,
-      allowNull: true
-    },
-    message: {
-      type: DataTypes.TEXT,
+    price: {
+      type: DataTypes.STRING(7),
       allowNull: true
     },
     created_at: {
@@ -41,11 +37,11 @@ module.exports = (sequelize) => {
     }
   }, {
     sequelize,
-    modelName: 'Review',
-    tableName: 'review',
+    modelName: 'Withdraw',
+    tableName: 'withdraw',
     timestamps: false,
     underscored: true
   });
 
-  return Review;
+  return Withdraw;
 };

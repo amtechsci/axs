@@ -114,18 +114,13 @@ module.exports = {
             const plan_features = await Plan_features.findAll({
                 attributes: ['id','title']
             });
-    
-            // Grouping subscriptions by plan_type
             const groupedSubscriptions = subscriptions.reduce((acc, item) => {
                 // Use plan_type as the key
                 const key = item.plan_type;
-    
-                // Initialize the array if not already
                 if (!acc[key]) {
                     acc[key] = [];
                 }
-    
-                // Add the current item to its respective group
+                item.feature = item.feature.split(",");
                 acc[key].push(item);
     
                 return acc;

@@ -30,6 +30,10 @@ module.exports = (sequelize) => {
       type: DataTypes.TEXT,
       allowNull: true
     },
+    address: {
+      type: DataTypes.TEXT,
+      allowNull: true
+    },
     description: {
       type: DataTypes.TEXT,
       allowNull: true
@@ -52,6 +56,10 @@ module.exports = (sequelize) => {
     },
     user_type: {
       type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    wallet: {
+      type: DataTypes.STRING(7),
       allowNull: true,
     },
     rating: {

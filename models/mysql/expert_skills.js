@@ -21,6 +21,10 @@ module.exports = (sequelize) => {
       type: DataTypes.STRING(25),
       allowNull: true
     },
+    price: {
+      type: DataTypes.STRING(7),
+      allowNull: true
+    },
     created_at: {
       type: DataTypes.DATE,
       allowNull: false,
@@ -38,6 +42,13 @@ module.exports = (sequelize) => {
     timestamps: false,
     underscored: true
   });
+
+  Expert_skills.associate = (models) => {
+    Expert_skills.belongsTo(models.User, {
+      foreignKey: 'cid',
+      as: 'user'
+    });
+  };
 
   return Expert_skills;
 };
