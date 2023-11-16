@@ -161,6 +161,7 @@ module.exports = {
                     cid: preferenceCids
                 }
             });
+            experiences.map(experience => {experience.images = experience.images.split(",")[0];});
             res.status(200).send({
                 flag:true,
                 message: "recommendations fetch successfully",
@@ -187,6 +188,11 @@ module.exports = {
                     id: rid
                 }
             });
+            experiences.images = experiences.images.split(",");
+            experiences.things_to_do = experiences.things_to_do.split(",\n");
+            // experiences.images = images.map(str => {
+            //         return parseInt(str, 10);
+            //       });
             res.status(200).send({
                 flag:true,
                 message: "recommendation fetch successfully",
@@ -231,7 +237,7 @@ module.exports = {
                 return res.status(404).send({ message: "User not found" });
             }
             const { tid } = req.query;
-            const task = await Task.findAll({
+            const task = await Task.findOne({
                 where: {
                     id: tid
                 }
