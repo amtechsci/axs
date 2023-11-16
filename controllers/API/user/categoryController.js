@@ -120,7 +120,10 @@ module.exports = {
                 if (!acc[key]) {
                     acc[key] = [];
                 }
-                item.feature = item.feature.split(",");
+                let feature = item.feature.split(",");
+                item.feature = feature.map(str => {
+                    return parseInt(str, 10);
+                  });
                 acc[key].push(item);
     
                 return acc;
