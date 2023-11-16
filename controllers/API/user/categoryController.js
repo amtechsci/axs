@@ -182,7 +182,7 @@ module.exports = {
                 return res.status(404).send({ message: "User not found" });
             }
             const { rid } = req.query;
-            const experiences = await Experience.findAll({
+            const experiences = await Experience.findOne({
                 where: {
                     id: rid
                 }
