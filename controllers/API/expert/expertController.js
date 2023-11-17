@@ -298,9 +298,14 @@ module.exports = {
     },
     expert_slots: async (req, res) => {
         try {
-            const { expert_id, date, start_time, end_time, is_active } = req.body;
+            const userId = req.user.id;
+            const user = await User.findByPk(userId);
+            if (!user) {
+                return res.status(404).send({ message: "User not found" });
+            }
+            const { date, start_time, end_time, is_active } = req.body;
             const newSlot = await Expert_slots.create({
-                expert_id,
+                expert_id:userId,
                 date,
                 start_time,
                 end_time,
@@ -312,11 +317,32 @@ module.exports = {
             res.status(500).send({flag:false, message: 'Internal Server Error' });
         }
     },
+    get_expert_slots: async (req, res) => {
+        try {
+            const userId = req.user.id;
+            const user = await User.findByPk(userId);
+            if (!user) {
+                return res.status(404).send({ message: "User not found" });
+            }
+            const newSlot = await Expert_slots.findAll({
+                where : {expert_id:userId}
+            });
+            res.status(201).send({flag:true, message: 'Availability slot created successfully', newSlot });
+        } catch (error) {
+            console.error('Error in creating availability slot:', error);
+            res.status(500).send({flag:false, message: 'Internal Server Error' });
+        }
+    },
     add_bank_account: async (req, res) => {
         try {
-            const { expert_id, bank_name, account_holder_name, account_number, ifsc_code } = req.body;
+            const userId = req.user.id;
+            const user = await User.findByPk(userId);
+            if (!user) {
+                return res.status(404).send({ message: "User not found" });
+            }
+            const { bank_name, account_holder_name, account_number, ifsc_code } = req.body;
             const newAccount = await Expert_bank_account.create({
-                expert_id,
+                expert_id:userId,
                 bank_name, account_holder_name, account_number, ifsc_code
             });
             res.status(201).send({flag:true, message: 'Bank account added successfully', newAccount });
@@ -327,10 +353,15 @@ module.exports = {
     },
     withdraw_request: async (req, res) => {
         try {
-            const { expert_id, bank_name, account_holder_name, account_number, ifsc_code } = req.body;
+            const userId = req.user.id;
+            const user = await User.findByPk(userId);
+            if (!user) {
+                return res.status(404).send({ message: "User not found" });
+            }
+            const { amount } = req.body;
             const newAccount = await Withdraw.create({
-                expert_id,
-                bank_name, account_holder_name, account_number, ifsc_code
+                expert_id:userId,
+                amount
             });
             res.status(201).send({flag:true, message: 'Bank account added successfully', newAccount });
         } catch (error) {
@@ -352,6 +383,30 @@ module.exports = {
         }
     },
     get_bank_account: async (req, res) => {
+        try {
+            const { expert_id } = req.query;
+            const accounts = await Expert_bank_account.findAll({
+                where:{expert_id}
+            });
+            res.status(200).send({flag:true, message: 'Bank account fetch successfully', accounts });
+        } catch (error) {
+            console.error('Error in creating availability slot:', error);
+            res.status(500).send({flag:false, message: 'Internal Server Error' });
+        }
+    },
+    delete_bank_account: async (req, res) => {
+        try {
+            const { expert_id } = req.query;
+            const accounts = await Expert_bank_account.findAll({
+                where:{expert_id}
+            });
+            res.status(200).send({flag:true, message: 'Bank account fetch successfully', accounts });
+        } catch (error) {
+            console.error('Error in creating availability slot:', error);
+            res.status(500).send({flag:false, message: 'Internal Server Error' });
+        }
+    },
+    user_chat: async (req, res) => {
         try {
             const { expert_id } = req.query;
             const accounts = await Expert_bank_account.findAll({

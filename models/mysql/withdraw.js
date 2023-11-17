@@ -13,16 +13,16 @@ module.exports = (sequelize) => {
       type: DataTypes.INTEGER,
       allowNull: true
     },
-    cid: {
+    expert_id: {
       type: DataTypes.INTEGER,
       allowNull: true
     },
-    experience: {
-      type: DataTypes.STRING(25),
+    amount: {
+      type: DataTypes.STRING(7),
       allowNull: true
     },
-    price: {
-      type: DataTypes.STRING(7),
+    status: {
+      type: DataTypes.INTEGER,
       allowNull: true
     },
     created_at: {
