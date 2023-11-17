@@ -268,7 +268,11 @@ module.exports = {
                   model: Experience,
                   as: 'experience'
                 }]
-            });              
+            });
+            booking.map(bookin => {
+                bookin.experience.images = bookin.experience.images.split(",")[0];
+                bookin.experience.things_to_do = bookin.experience.things_to_do.split(",\n");
+            });
             res.status(200).send({
                 flag:true,
                 message: "Booking fetch successfully",
@@ -290,7 +294,7 @@ module.exports = {
                 return res.status(404).send({ message: "User not found" });
             }
             const { booking_id } = req.query;
-            const booking = await Booking.findAll({
+            const booking = await Booking.findOne({
                 where: {
                     id: booking_id
                 },
@@ -299,6 +303,8 @@ module.exports = {
                     as: 'experience'
                 }]
             });
+            booking.experience.images = booking.experience.images.split(",");
+            booking.experience.things_to_do = booking.experience.things_to_do.split(",\n");
             res.status(200).send({
                 flag:true,
                 message: "Booking details fetched successfully",
