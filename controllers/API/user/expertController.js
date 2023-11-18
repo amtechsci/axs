@@ -95,12 +95,11 @@ module.exports = {
     add_review: async (req, res) => {
         try {
             const user = req.user;
-            const { expert_id } = req.query;
-            const { message } = req.body;
-            await Expert_chat.create({"uid":user.id,expert_id,sender:1,message});
+            const { expert_id,task_id,rating,message } = req.body;
+            await Review.create({"uid":user.id,expert_id,task_id,rating,message});
             res.status(200).send({
                 flag:true,
-                message: "Message sent"
+                message: "Rating Added"
             });
         } catch (error) {
             console.error('Error in setup_profile:', error);

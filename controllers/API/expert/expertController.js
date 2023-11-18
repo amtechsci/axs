@@ -68,25 +68,31 @@ module.exports = {
     update_document: async (req, res) => {
         try {
             const user = req.user;
-            if (req.file) {
-                const { document_name } = req.body;
-                document_file = req.file.location;
-                await Expert_documents.create({"uid":user.id,document_name,document_file});
+            if (req.files && req.files.length > 0) {
+                let document_name = "document";
+                let i=1;
+                await Promise.all(req.files.map(file => {
+                    const document_file = file.location;
+                    let dn = document_name +" "+i;
+                    i++;
+                    return Expert_documents.create({ "uid": user.id, "document_name":dn, document_file });
+                }));
+    
                 res.status(200).send({
                     flag: true,
-                    message: "Document updated successfully",
+                    message: "Documents updated successfully",
                 });
             } else {
-                res.status(400).send({ flag: false, message: "No document file provided" });
+                res.status(400).send({ flag: false, message: "No document files provided" });
             }
         } catch (error) {
-            console.error('Error in update_profile_image:', error);
+            console.error('Error in update_document:', error);
             res.status(500).send({
                 flag: false,
                 message: 'Internal Server Error ' + error
             });
         }
-    },
+    },    
     get_user: async (req, res) => {
         try {
             const user = req.user;
