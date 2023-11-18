@@ -4,6 +4,7 @@ const Expert_chat = require('../../../models/mongo/expert_chat');
 const Task = db.Task;
 const Review = db.Review;
 const Expert_skills = db.Expert_skills;
+const Category = db.Category;
 
 module.exports = {
     expert_list: async (req, res) => {
@@ -31,10 +32,21 @@ module.exports = {
             const expert_skills = await Expert_skills.findAll({attributes: ['cid','experience', 'price'],where:{"uid":expert_id}});
             const total_review = await Review.count({where:{"uid":expert_id}});
             const total_task = await Task.count({where:{expert_id}});
+            const expertSkillsPromises = expert_skills.map(es => 
+                Category.findOne({ where: { "id": es.cid } })
+            );
+            const expertSkillsWithCategory = await Promise.all(expert_skills.map(async (es) => {
+                const category = await Category.findOne({ where: { id: es.dataValues.cid } });
+                return {
+                    ...es.dataValues,
+                    category_name: category ? category.category_name : null
+                };
+            }));         
+
             res.status(200).send({
                 flag:true,
                 message: "Expert fetch successfully",
-                "data":{expert,total_review,total_task,"hours_worked":50,expert_skills}
+                "data":{expert,total_review,total_task,"hours_worked":50,"expert_skills":expertSkillsWithCategory}
             });
         } catch (error) {
             console.error('Error in setup_profile:', error);
