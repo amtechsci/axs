@@ -95,18 +95,35 @@ module.exports = {
     add_review: async (req, res) => {
         try {
             const user = req.user;
-            const { expert_id,task_id,rating,message } = req.body;
-            await Review.create({"uid":user.id,expert_id,task_id,rating,message});
+            const { expert_id, task_id, rating, message } = req.body;
+
+            const existingReview = await Review.findOne({
+                where: {
+                    uid: user.id,
+                    expert_id: expert_id,
+                    task_id: task_id
+                }
+            });
+    
+            if (existingReview) {
+                return res.status(400).send({
+                    flag: false,
+                    message: "You have already submitted feedback for this task."
+                });
+            }
+            await Review.create({ "uid": user.id, expert_id, task_id, rating, message });
             res.status(200).send({
-                flag:true,
+                flag: true,
                 message: "Rating Added"
             });
+    
         } catch (error) {
-            console.error('Error in setup_profile:', error);
+            console.error('Error in add_review:', error);
             res.status(500).send({
-                flag:false,
+                flag: false,
                 message: 'Internal Server Error ' + error.message
             });
         }
-    },
+    }
+    
 };
