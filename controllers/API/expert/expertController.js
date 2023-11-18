@@ -128,12 +128,15 @@ module.exports = {
     setup_profile: async (req, res) => {
         try {
             const user = req.user;
-            const { name, description, gender, category_id, experience } = req.body;
+            const { name, description, gender, category_id } = req.body;
             user.name = name;
             user.description = description;
             user.gender = gender;
             await user.save();
-            await Expert_skills.create({"uid":user.id,"cid":category_id,"experience":experience});
+            await Promise.all(category_id.map(cid => 
+                Expert_skills.create({ "uid": user.id, "cid": cid })
+            ));
+            // await Expert_skills.create({"uid":user.id,"cid":category_id,"experience":experience});
             res.status(200).send({
                 flag:true,
                 message: "Profile updated successfully",

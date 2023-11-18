@@ -6,8 +6,7 @@ const expert_chatSchema = new mongoose.Schema({
         required: true
     },
     expert_id: {
-        type: String,
-        maxlength: 55,
+        type: Number,
         required: true
     },
     sender: {

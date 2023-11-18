@@ -46,6 +46,11 @@ module.exports = (sequelize) => {
       allowNull: true,
       comment: 'ongoing=1,complete=2,canceled=3'
     },
+    type: {
+      type: DataTypes.STRING(15),
+      allowNull: true,
+      comment: 'ongoing=1,complete=2,canceled=3'
+    },
     created_at: {
       type: DataTypes.DATE,
       allowNull: false,

@@ -9,7 +9,7 @@ protectedRouter.use(authMiddleware);
 
 protectedRouter.post('/create-pin', expertController.create_pin);
 protectedRouter.post('/pin-login', expertController.pin_login);
-protectedRouter.post('/update-document', upload.array('document_file',3), expertController.update_document);
+protectedRouter.post('/update-document', upload.array('document_file',5), expertController.update_document);
 protectedRouter.post('/setup-profile', expertController.setup_profile);
 protectedRouter.get('/get-user', expertController.get_user);
 protectedRouter.get('/task', expertController.task);
@@ -26,7 +26,7 @@ protectedRouter.get('/wallet', expertController.wallet);
 protectedRouter.post('/withdraw-request', expertController.withdraw_request);
 protectedRouter.get('/withdraw', expertController.withdraw);
 protectedRouter.get('/user-chat', expertController.user_chat);
-protectedRouter.get('/user-send-message', expertController.user_chat);
+protectedRouter.post('/user-send-message', expertController.user_chat);
 
 
 module.exports = protectedRouter;

@@ -10,6 +10,8 @@ const Task = db.Task;
 const Booking = db.Booking;
 const Review = db.Review;
 const Plan_features = db.Plan_features;
+const Task_status = db.Task_status;
+const Booking_status = db.Booking_status;
 
 module.exports = {
     category: async (req, res) => {
@@ -208,19 +210,45 @@ module.exports = {
                     id: tid
                 }
             });
+    
+            if (!task) {
+                return res.status(404).send({
+                    flag: false,
+                    message: "Task not found"
+                });
+            }
+    
+            const category = await Category.findOne({
+                where: { id: task.cid }
+            });
+            const expert = await User.findOne({
+                where: { id: task.expert_id }
+            });
+            const task_status = await Task_status.findOne({
+                attributes: ['status','created_at'],
+                where: { id: task.id }
+            });
+            
+            const response = {
+                ...task.dataValues,
+                category_name: category ? category.category_name : null,
+                expert: expert ? expert.dataValues : null,
+                task_status: task_status ? task_status.dataValues : null
+            };
+    
             res.status(200).send({
-                flag:true,
-                message: "Task fetch successfully",
-                task
+                flag: true,
+                message: "Task fetched successfully",
+                task: response
             });
         } catch (error) {
-            console.error('Error in setup_profile:', error);
+            console.error('Error in task_details:', error);
             res.status(500).send({
-                flag:false,
+                flag: false,
                 message: 'Internal Server Error ' + error.message
             });
         }
-    },
+    },    
     booking: async (req, res) => {
         try {
             const user = req.user;
@@ -261,12 +289,25 @@ module.exports = {
                     as: 'experience'
                 }]
             });
+            
             booking.experience.images = booking.experience.images.split(",");
             booking.experience.things_to_do = booking.experience.things_to_do.split(",\n");
+            const category = await Category.findOne({
+                where: { id: booking.experience.cid }
+            });
+            const booking_status = await Booking_status.findOne({
+                attributes: ['status','created_at'],
+                where: { id: booking.id }
+            });
+            const response = {
+                ...booking.dataValues,
+                category_name: category ? category.category_name : null,
+                booking_status: booking_status ? booking_status.dataValues : null
+            };
             res.status(200).send({
                 flag:true,
                 message: "Booking details fetched successfully",
-                booking
+                response
             });
         } catch (error) {
             console.error('Error in booking_details:', error);

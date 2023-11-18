@@ -1,12 +1,5 @@
 const db = require('../../models');
 const User = db.User;
-const jwt = require('jsonwebtoken');
-const twilio = require('twilio')(process.env.twilioAccountSid, process.env.twilioAuthToken);
-
-const generateToken = (user) => {
-    const secretKey = process.env.JWT_SECRET;
-    return jwt.sign({ id: user.id,device_id: user.device_id }, secretKey, { expiresIn: '365d' });
-};
 
 module.exports = {
     login: async (req, res) => {
