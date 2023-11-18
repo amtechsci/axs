@@ -9,10 +9,6 @@ module.exports = (sequelize) => {
       primaryKey: true,
       autoIncrement: true
     },
-    uid: {
-      type: DataTypes.INTEGER,
-      allowNull: true
-    },
     expert_id: {
       type: DataTypes.INTEGER,
       allowNull: true

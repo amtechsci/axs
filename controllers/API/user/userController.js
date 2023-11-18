@@ -9,11 +9,7 @@ const { uploadFile } = require('../../../config/aws-bucket');
 module.exports = {
     create_pin: async (req, res) => {
         try {
-            const userId = req.user.id;
-            const user = await User.findByPk(userId);
-            if (!user) {
-                return res.status(404).json({ message: "User not found" });
-            }
+            const user = req.user;
             const { pin } = req.body;
             user.pin = pin;
             await user.save();
@@ -41,9 +37,7 @@ module.exports = {
     },
     pin_login: async (req, res) => {
         try {
-            const userId = req.user.id;
-            const user = await User.findByPk(userId);
-            if (!user) { return res.status(404).json({flag:false, message: "User not found" }); }
+            const user = req.user;
             const { pin } = req.body;
             if(user.pin == pin){
                 res.status(200).json({
@@ -66,8 +60,7 @@ module.exports = {
     },
     setup_profile: async (req, res) => {
         try {
-            const userId = req.user.id;
-            const user = await User.findByPk(userId);
+            const user = req.user;
             if (!user) {
                 return res.status(404).send({ message: "User not found" });
             }
@@ -91,15 +84,12 @@ module.exports = {
     },
     update_profile_image: async (req, res) => {
         try {
-            const userId = req.user.id;
-            const user = await User.findByPk(userId);
+            const user = req.user;
             if (!user) {
                 return res.status(404).send({ message: "User not found" });
             }
     
             if (req.file) {
-                // Directly use the URL provided by multer-s3
-                // The URL of the uploaded file is available in req.file.location
                 user.profile_img = req.file.location;
                 await user.save();
     
@@ -120,8 +110,7 @@ module.exports = {
     },    
     add_preferences: async (req, res) => {
         try {
-            const userId = req.user.id;
-            const user = await User.findByPk(userId);
+            const user = req.user;
             if (!user) {
                 return res.status(404).send({ message: "User not found" });
             }
@@ -143,8 +132,7 @@ module.exports = {
     },
     get_user: async (req, res) => {
         try {
-            const userId = req.user.id;
-            const user = await User.findByPk(userId);
+            const user = req.user;
             if (!user) {
                 return res.status(404).send({ message: "User not found" });
             }else{
@@ -164,8 +152,7 @@ module.exports = {
     },
     user_current_subscription: async (req, res) => {
         try {
-            const userId = req.user.id;
-            const user = await User.findByPk(userId);
+            const user = req.user;
             if (!user) {
                 return res.status(404).send({ message: "User not found" });
             }

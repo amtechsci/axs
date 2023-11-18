@@ -6,7 +6,7 @@ const twilio = require('twilio')(process.env.twilioAccountSid, process.env.twili
 
 const generateToken = (user) => {
     const secretKey = process.env.JWT_SECRET;
-    return jwt.sign({ id: user.id }, secretKey, { expiresIn: '30d' });
+    return jwt.sign({ id: user.id,device_id: user.device_id }, secretKey, { expiresIn: '365d' });
 };
 
 module.exports = {
@@ -51,8 +51,8 @@ module.exports = {
             let where = {where: { mobile, otp, user_type }}
             let user = await User.findOne(where);
             if (user) {
-                const token = generateToken(user);
                 await user.update({ device_token : device_token , device_id:device_id });
+                const token = generateToken(user);
                 let new_user = user.name ? 0 : 1;
                 res.json({
                     flag:true,

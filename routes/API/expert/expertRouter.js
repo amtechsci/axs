@@ -23,7 +23,7 @@ protectedRouter.get('/get-bank-account', expertController.get_bank_account);
 protectedRouter.get('/delete-bank-account', expertController.delete_bank_account);
 protectedRouter.post('/edit-profile', expertController.edit_profile);
 protectedRouter.get('/wallet', expertController.wallet);
-protectedRouter.get('/withdraw-request', expertController.withdraw_request);
+protectedRouter.post('/withdraw-request', expertController.withdraw_request);
 protectedRouter.get('/withdraw', expertController.withdraw);
 protectedRouter.get('/user-chat', expertController.user_chat);
 protectedRouter.get('/user-send-message', expertController.user_chat);

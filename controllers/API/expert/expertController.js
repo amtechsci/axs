@@ -16,11 +16,7 @@ const moment = require('moment');
 module.exports = {
     create_pin: async (req, res) => {
         try {
-            const userId = req.user.id;
-            const user = await User.findByPk(userId);
-            if (!user) {
-                return res.status(404).json({ message: "User not found" });
-            }
+            const user = req.user;
             const { pin } = req.body;
             user.pin = pin;
             await user.save();
@@ -48,9 +44,7 @@ module.exports = {
     },
     pin_login: async (req, res) => {
         try {
-            const userId = req.user.id;
-            const user = await User.findByPk(userId);
-            if (!user) { return res.status(404).json({flag:false, message: "User not found" }); }
+            const user = req.user;
             const { pin } = req.body;
             if(user.pin == pin){
                 res.status(200).json({
@@ -73,11 +67,7 @@ module.exports = {
     },
     update_document: async (req, res) => {
         try {
-            const userId = req.user.id;
-            const user = await User.findByPk(userId);
-            if (!user) {
-                return res.status(404).send({ message: "User not found" });
-            }
+            const user = req.user;
             if (req.file) {
                 const { document_name } = req.body;
                 document_file = req.file.location;
@@ -99,17 +89,12 @@ module.exports = {
     },
     get_user: async (req, res) => {
         try {
-            const userId = req.user.id;
-            const user = await User.findByPk(userId);
-            if (!user) {
-                return res.status(404).send({ message: "User not found" });
-            }else{
+            const user = req.user;
                 res.status(200).send({
                     flag:true,
                     message: "User data successfully",
                     user
                 });
-            }
         } catch (error) {
             console.error('Error in setup_profile:', error);
             res.status(500).send({
@@ -120,17 +105,12 @@ module.exports = {
     },
     wallet: async (req, res) => {
         try {
-            const userId = req.user.id;
-            const user = await User.findByPk(userId);
-            if (!user) {
-                return res.status(404).send({ message: "User not found" });
-            }else{
+            const user = req.user;
                 res.status(200).send({
                     flag:true,
                     message: "User data successfully",
                     "wallet":user.wallet
                 });
-            }
         } catch (error) {
             console.error('Error in setup_profile:', error);
             res.status(500).send({
@@ -141,11 +121,7 @@ module.exports = {
     },
     setup_profile: async (req, res) => {
         try {
-            const userId = req.user.id;
-            const user = await User.findByPk(userId);
-            if (!user) {
-                return res.status(404).send({ message: "User not found" });
-            }
+            const user = req.user;
             const { name, description, gender, category_id, experience } = req.body;
             user.name = name;
             user.description = description;
@@ -167,11 +143,7 @@ module.exports = {
     },
     edit_profile: async (req, res) => {
         try {
-            const userId = req.user.id;
-            const user = await User.findByPk(userId);
-            if (!user) {
-                return res.status(404).send({ message: "User not found" });
-            }
+            const user = req.user;
             const { name, email, mobile, address } = req.body;
             user.name = name;
             user.email = email;
@@ -193,14 +165,10 @@ module.exports = {
     },
     task_analytics: async (req, res) => {
         try {
-            const userId = req.user.id;
-            const user = await User.findByPk(userId);
-            if (!user) {
-                return res.status(404).send({ message: "User not found" });
-            }
+            const user = req.user;
             const taskCountByStatus = await Task.findAll({
                 attributes: ['status', [Sequelize.fn('COUNT', Sequelize.col('id')), 'taskCount']],
-                where: { expert_id:userId },
+                where: { expert_id:user.id },
                 group: ['status']
             });            
             res.status(200).send({
@@ -218,16 +186,12 @@ module.exports = {
     },
     today_appointment: async (req, res) => {
         try {
-            const userId = req.user.id;
-            const user = await User.findByPk(userId);
-            if (!user) {
-                return res.status(404).send({ message: "User not found" });
-            }
+            const user = req.user;
             const todayStart = moment().startOf('day').toDate();
             const todayEnd = moment().endOf('day').toDate();
             const task = await Task.findAll({
                 where: {
-                    expert_id: userId,
+                    expert_id: user.id,
                     updated_at: {
                         [Op.gte]: todayStart, // Greater than or equal to the start of today
                         [Op.lte]: todayEnd   // Less than or equal to the end of today
@@ -249,13 +213,9 @@ module.exports = {
     },
     task: async (req, res) => {
         try {
-            const userId = req.user.id;
-            const user = await User.findByPk(userId);
-            if (!user) {
-                return res.status(404).send({ message: "User not found" });
-            }
+            const user = req.user;
             const task = await Task.findAll({
-                where:{expert_id:userId}
+                where:{expert_id:user.id}
             });
             res.status(200).send({
                 flag:true,
@@ -272,13 +232,9 @@ module.exports = {
     },
     task_details: async (req, res) => {
         try {
-            const userId = req.user.id;
-            const user = await User.findByPk(userId);
-            if (!user) {
-                return res.status(404).send({ message: "User not found" });
-            }
+            const user = req.user;
             const { tid } = req.query;
-            const task = await Task.findAll({
+            const task = await Task.findOne({
                 where: {
                     id: tid
                 }
@@ -298,14 +254,10 @@ module.exports = {
     },
     expert_slots: async (req, res) => {
         try {
-            const userId = req.user.id;
-            const user = await User.findByPk(userId);
-            if (!user) {
-                return res.status(404).send({ message: "User not found" });
-            }
+            const user = req.user;
             const { date, start_time, end_time, is_active } = req.body;
             const newSlot = await Expert_slots.create({
-                expert_id:userId,
+                expert_id:user.id,
                 date,
                 start_time,
                 end_time,
@@ -319,13 +271,9 @@ module.exports = {
     },
     get_expert_slots: async (req, res) => {
         try {
-            const userId = req.user.id;
-            const user = await User.findByPk(userId);
-            if (!user) {
-                return res.status(404).send({ message: "User not found" });
-            }
+            const user = req.user;
             const newSlot = await Expert_slots.findAll({
-                where : {expert_id:userId}
+                where : {expert_id:user.id}
             });
             res.status(201).send({flag:true, message: 'Availability slot created successfully', newSlot });
         } catch (error) {
@@ -335,14 +283,10 @@ module.exports = {
     },
     add_bank_account: async (req, res) => {
         try {
-            const userId = req.user.id;
-            const user = await User.findByPk(userId);
-            if (!user) {
-                return res.status(404).send({ message: "User not found" });
-            }
+            const user = req.user;
             const { bank_name, account_holder_name, account_number, ifsc_code } = req.body;
             const newAccount = await Expert_bank_account.create({
-                expert_id:userId,
+                expert_id:user.id,
                 bank_name, account_holder_name, account_number, ifsc_code
             });
             res.status(201).send({flag:true, message: 'Bank account added successfully', newAccount });
@@ -353,17 +297,13 @@ module.exports = {
     },
     withdraw_request: async (req, res) => {
         try {
-            const userId = req.user.id;
-            const user = await User.findByPk(userId);
-            if (!user) {
-                return res.status(404).send({ message: "User not found" });
-            }
+            const user = req.user;
             const { amount } = req.body;
-            const newAccount = await Withdraw.create({
-                expert_id:userId,
+            await Withdraw.create({
+                expert_id:user.id,
                 amount
             });
-            res.status(201).send({flag:true, message: 'Bank account added successfully', newAccount });
+            res.status(201).send({flag:true, message: 'withdraw request send successfully' });
         } catch (error) {
             console.error('Error in creating availability slot:', error);
             res.status(500).send({flag:false, message: 'Internal Server Error' });
@@ -371,12 +311,11 @@ module.exports = {
     },
     withdraw: async (req, res) => {
         try {
-            const { expert_id, bank_name, account_holder_name, account_number, ifsc_code } = req.body;
-            const newAccount = await Expert_bank_account.create({
-                expert_id,
-                bank_name, account_holder_name, account_number, ifsc_code
+            const user = req.user;
+            const withdraw_request = await Withdraw.findAll({
+                where:{expert_id:user.id}
             });
-            res.status(201).send({flag:true, message: 'Bank account added successfully', newAccount });
+            res.status(201).send({flag:true, message: 'withdraw request fetch', withdraw_request });
         } catch (error) {
             console.error('Error in creating availability slot:', error);
             res.status(500).send({flag:false, message: 'Internal Server Error' });
@@ -384,9 +323,9 @@ module.exports = {
     },
     get_bank_account: async (req, res) => {
         try {
-            const { expert_id } = req.query;
+            const user = req.user;
             const accounts = await Expert_bank_account.findAll({
-                where:{expert_id}
+                where:{expert_id:user.id}
             });
             res.status(200).send({flag:true, message: 'Bank account fetch successfully', accounts });
         } catch (error) {
@@ -396,11 +335,16 @@ module.exports = {
     },
     delete_bank_account: async (req, res) => {
         try {
-            const { expert_id } = req.query;
-            const accounts = await Expert_bank_account.findAll({
-                where:{expert_id}
+            const user = req.user;
+            const account = await Expert_bank_account.findOne({
+                where:{expert_id:user.id}
             });
-            res.status(200).send({flag:true, message: 'Bank account fetch successfully', accounts });
+            if (account) {
+                await account.destroy();
+                res.status(200).send({flag:true, message: 'Bank account remove' });
+            }else{
+                res.status(200).send({flag:false, message: 'Bank account not found' });
+            }
         } catch (error) {
             console.error('Error in creating availability slot:', error);
             res.status(500).send({flag:false, message: 'Internal Server Error' });
@@ -408,11 +352,14 @@ module.exports = {
     },
     user_chat: async (req, res) => {
         try {
-            const { expert_id } = req.query;
-            const accounts = await Expert_bank_account.findAll({
-                where:{expert_id}
+            const user = req.user;
+            const { uid } = req.query;
+            const chat = await Expert_chat.find({"uid":uid,expert_id:user.id});
+            res.status(200).send({
+                flag:true,
+                message: "Chat fetch successfully",
+                chat
             });
-            res.status(200).send({flag:true, message: 'Bank account fetch successfully', accounts });
         } catch (error) {
             console.error('Error in creating availability slot:', error);
             res.status(500).send({flag:false, message: 'Internal Server Error' });

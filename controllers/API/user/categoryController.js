@@ -14,11 +14,7 @@ const Plan_features = db.Plan_features;
 module.exports = {
     category: async (req, res) => {
         try {
-            const userId = req.user.id;
-            const user = await User.findByPk(userId);
-            if (!user) {
-                return res.status(404).send({ message: "User not found" });
-            }
+            const user = req.user;
             const { cid, page } = req.query;
             let ccid = cid ? cid : 0;
             let cpage = page ? parseInt(page) : 1; // Ensure that the page is an integer
@@ -47,11 +43,7 @@ module.exports = {
     },
     expert_category: async (req, res) => {
         try {
-            const userId = req.user.id;
-            const user = await User.findByPk(userId);
-            if (!user) {
-                return res.status(404).send({ message: "User not found" });
-            }
+            const user = req.user;
             const { cid, page } = req.query;
             let ccid = cid ? cid : 0;
             let cpage = page ? parseInt(page) : 1; // Ensure that the page is an integer
@@ -80,13 +72,8 @@ module.exports = {
     },
     notification: async (req, res) => {
         try {
-            const userId = req.user.id;
-            const user = await User.findByPk(userId);
-            if (!user) {
-                return res.status(404).send({ message: "User not found" });
-            }
-            console.log("UserId Type:", typeof userId, "Value:", userId);
-            const notifications = await Notification.find({ uid: userId });
+            const user = req.user;
+            const notifications = await Notification.find({ uid: user.id });
             res.status(200).send({
                 flag:true,
                 message: "Notification fetch successfully",
@@ -104,12 +91,7 @@ module.exports = {
     },
     get_subscription: async (req, res) => {
         try {
-            const userId = req.user.id;
-            const user = await User.findByPk(userId);
-            if (!user) {
-                return res.status(404).send({ message: "User not found" });
-            }
-    
+            const user = req.user;
             const subscriptions = await Get_subscription.findAll();
             const plan_features = await Plan_features.findAll({
                 attributes: ['id','title']
@@ -146,13 +128,9 @@ module.exports = {
     
     recommendations: async (req, res) => {
         try {
-            const userId = req.user.id;
-            const user = await User.findByPk(userId);
-            if (!user) {
-                return res.status(404).send({ message: "User not found" });
-            }
+            const user = req.user;
             const preferences = await Preference.findAll({
-                where:{uid:userId}
+                where:{uid:user.id}
             });
             const preferenceCids = preferences.map(preference => preference.cid);
             const experiences = await Experience.findAll({
@@ -177,11 +155,7 @@ module.exports = {
     },
     recommendation_details: async (req, res) => {
         try {
-            const userId = req.user.id;
-            const user = await User.findByPk(userId);
-            if (!user) {
-                return res.status(404).send({ message: "User not found" });
-            }
+            const user = req.user;
             const { rid } = req.query;
             const experiences = await Experience.findOne({
                 where: {
@@ -208,13 +182,9 @@ module.exports = {
     },
     task: async (req, res) => {
         try {
-            const userId = req.user.id;
-            const user = await User.findByPk(userId);
-            if (!user) {
-                return res.status(404).send({ message: "User not found" });
-            }
+            const user = req.user;
             const task = await Task.findAll({
-                where:{uid:userId}
+                where:{uid:user.id}
             });
             res.status(200).send({
                 flag:true,
@@ -231,11 +201,7 @@ module.exports = {
     },
     task_details: async (req, res) => {
         try {
-            const userId = req.user.id;
-            const user = await User.findByPk(userId);
-            if (!user) {
-                return res.status(404).send({ message: "User not found" });
-            }
+            const user = req.user;
             const { tid } = req.query;
             const task = await Task.findOne({
                 where: {
@@ -257,13 +223,9 @@ module.exports = {
     },
     booking: async (req, res) => {
         try {
-            const userId = req.user.id;
-            const user = await User.findByPk(userId);
-            if (!user) {
-                return res.status(404).send({ message: "User not found" });
-            }
+            const user = req.user;
             const booking = await Booking.findAll({
-                where: { uid: userId },
+                where: { uid: user.id },
                 include: [{
                   model: Experience,
                   as: 'experience'
@@ -288,11 +250,7 @@ module.exports = {
     },
     booking_details: async (req, res) => {
         try {
-            const userId = req.user.id;
-            const user = await User.findByPk(userId);
-            if (!user) {
-                return res.status(404).send({ message: "User not found" });
-            }
+            const user = req.user;
             const { booking_id } = req.query;
             const booking = await Booking.findOne({
                 where: {

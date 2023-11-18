@@ -8,11 +8,7 @@ const Expert_skills = db.Expert_skills;
 module.exports = {
     expert_list: async (req, res) => {
         try {
-            const userId = req.user.id;
-            const user = await User.findByPk(userId);
-            if (!user) {
-                return res.status(404).send({ message: "User not found" });
-            }
+            const user = req.user;
             const expert = await User.findAll({where:{"user_type":2}});
             res.status(200).send({
                 flag:true,
@@ -29,12 +25,8 @@ module.exports = {
     },
     expert_profile: async (req, res) => {
         try {
-            const userId = req.user.id;
-            const user = await User.findByPk(userId);
+            const user = req.user;
             const { expert_id } = req.query;
-            if (!user) {
-                return res.status(404).send({ message: "User not found" });
-            }
             const expert = await User.findOne({where:{"id":expert_id,"user_type":2}});
             const expert_skills = await Expert_skills.findAll({attributes: ['cid','experience', 'price'],where:{"uid":expert_id}});
             const total_review = await Review.count({where:{"uid":expert_id}});
@@ -54,12 +46,8 @@ module.exports = {
     },
     expert_chat: async (req, res) => {
         try {
-            const userId = req.user.id;
-            const user = await User.findByPk(userId);
+            const user = req.user;
             const { expert_id } = req.query;
-            if (!user) {
-                return res.status(404).send({ message: "User not found" });
-            }
             const chat = await Expert_chat.find({"uid":user.id,expert_id});
             res.status(200).send({
                 flag:true,
@@ -76,13 +64,9 @@ module.exports = {
     },
     expert_message: async (req, res) => {
         try {
-            const userId = req.user.id;
-            const user = await User.findByPk(userId);
+            const user = req.user;
             const { expert_id } = req.query;
             const { message } = req.body;
-            if (!user) {
-                return res.status(404).send({ message: "User not found" });
-            }
             await Expert_chat.create({"uid":user.id,expert_id,sender:1,message});
             res.status(200).send({
                 flag:true,
@@ -98,13 +82,9 @@ module.exports = {
     },
     add_review: async (req, res) => {
         try {
-            const userId = req.user.id;
-            const user = await User.findByPk(userId);
+            const user = req.user;
             const { expert_id } = req.query;
             const { message } = req.body;
-            if (!user) {
-                return res.status(404).send({ message: "User not found" });
-            }
             await Expert_chat.create({"uid":user.id,expert_id,sender:1,message});
             res.status(200).send({
                 flag:true,
