@@ -127,7 +127,7 @@ module.exports = {
             user.description = description;
             user.gender = gender;
             await user.save();
-            await Expert_skills.create({"uid":userId,"cid":category_id,"experience":experience});
+            await Expert_skills.create({"uid":user.id,"cid":category_id,"experience":experience});
             res.status(200).send({
                 flag:true,
                 message: "Profile updated successfully",

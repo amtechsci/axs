@@ -158,7 +158,7 @@ module.exports = {
             }
             const user_subscription = await User_subscription.findOne({
                 where: {
-                    uid: userId,
+                    uid: user.id,
                     status: 1
                 },
                 include: [{
