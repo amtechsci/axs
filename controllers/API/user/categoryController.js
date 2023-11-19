@@ -240,6 +240,7 @@ module.exports = {
             const response = {
                 ...task.dataValues,
                 category_name: category ? category.category_name : null,
+                category_img: category ? category.category_img : null,
                 expert: expert ? expert.dataValues : null,
                 task_status: task_status ? task_status : []
             };
@@ -310,6 +311,7 @@ module.exports = {
             const response = {
                 ...booking.dataValues,
                 category_name: category ? category.category_name : null,
+                category_img: category ? category.category_img : null,
                 booking_status: booking_status ? booking_status.dataValues : []
             };
             res.status(200).send({
