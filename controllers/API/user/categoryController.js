@@ -232,16 +232,16 @@ module.exports = {
             const category = await Category.findOne({
                 where: { id: task.cid }
             });
-            const task_status = await Task_status.findOne({
+            const task_status = await Task_status.findAll({
                 attributes: ['status','created_at'],
-                where: { id: task.id }
+                where: { task_id: task.id }
             });
             
             const response = {
                 ...task.dataValues,
                 category_name: category ? category.category_name : null,
                 expert: expert ? expert.dataValues : null,
-                task_status: task_status ? task_status.dataValues : []
+                task_status: task_status ? task_status : []
             };
     
             res.status(200).send({
