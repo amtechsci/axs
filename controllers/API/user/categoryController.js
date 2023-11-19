@@ -12,6 +12,7 @@ const Review = db.Review;
 const Plan_features = db.Plan_features;
 const Task_status = db.Task_status;
 const Booking_status = db.Booking_status;
+const Executive = db.Executive;
 
 module.exports = {
     category: async (req, res) => {
@@ -127,7 +128,6 @@ module.exports = {
             });
         }
     },
-    
     recommendations: async (req, res) => {
         try {
             const user = req.user;
@@ -217,12 +217,20 @@ module.exports = {
                     message: "Task not found"
                 });
             }
-    
+            let expert;
+            if(task.type == "ticket"){
+                expert = await Executive.findOne({
+                    
+                    where: { id: task.executive_id }
+                });
+            }else{
+                expert = await User.findOne({
+                    
+                    where: { id: task.expert_id }
+                });
+            }
             const category = await Category.findOne({
                 where: { id: task.cid }
-            });
-            const expert = await User.findOne({
-                where: { id: task.expert_id }
             });
             const task_status = await Task_status.findOne({
                 attributes: ['status','created_at'],

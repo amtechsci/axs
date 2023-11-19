@@ -1,10 +1,12 @@
 const db = require('../../../models');
 const User = db.User;
 const Expert_chat = require('../../../models/mongo/expert_chat');
+const Bot_chat = require('../../../models/mongo/bot_chat');
 const Task = db.Task;
 const Review = db.Review;
 const Expert_skills = db.Expert_skills;
 const Category = db.Category;
+const Chat = db.Chat;
 
 module.exports = {
     expert_list: async (req, res) => {
@@ -115,6 +117,54 @@ module.exports = {
             res.status(200).send({
                 flag: true,
                 message: "Rating Added"
+            });
+    
+        } catch (error) {
+            console.error('Error in add_review:', error);
+            res.status(500).send({
+                flag: false,
+                message: 'Internal Server Error ' + error.message
+            });
+        }
+    },
+    bot_chat_list: async (req, res) => {
+        try {
+            const user = req.user;
+            const chat = await Chat.findAll({
+                where: {
+                    uid: user.id,
+                }
+            });
+            res.status(200).send({
+                flag: true,
+                message: "Chat data fetch",
+                chat
+            });
+    
+        } catch (error) {
+            console.error('Error in add_review:', error);
+            res.status(500).send({
+                flag: false,
+                message: 'Internal Server Error ' + error.message
+            });
+        }
+    },
+    bot_chat_history: async (req, res) => {
+        try {
+            const user = req.user;
+            const chat = await Chat.findOne({
+                where: {
+                    uid: user.id,
+                },
+                order: [['id', 'DESC']],
+                limit: 1
+            });
+            const bot_chat = await Bot_chat.find({"chat_id":chat.id});
+            res.status(200).send({
+                flag: true,
+                message: "Chat data fetch",
+                chat,
+                bot_chat
             });
     
         } catch (error) {
