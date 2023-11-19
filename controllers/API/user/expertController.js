@@ -7,12 +7,24 @@ const Review = db.Review;
 const Expert_skills = db.Expert_skills;
 const Category = db.Category;
 const Chat = db.Chat;
+const Sequelize = require('sequelize');
 
 module.exports = {
     expert_list: async (req, res) => {
         try {
             const user = req.user;
-            const expert = await User.findAll({where:{"user_type":2}});
+            const { cid } = req.query;
+            const expert_skills = await Expert_skills.findAll({attributes: ['uid'],where:{cid}});
+            const expertUserIds = expert_skills.map(es => es.uid);
+            const expert = await User.findAll({
+                where: {
+                    user_type: 2,
+                    id: {
+                        [Sequelize.Op.in]: expertUserIds
+                    }
+                }
+            });            
+            // const expert = await User.findAll({where:{"user_type":2}});
             res.status(200).send({
                 flag:true,
                 message: "Expert fetch successfully",
@@ -183,11 +195,16 @@ module.exports = {
     bot_chat_message: async (req, res) => {
         try {
             const user = req.user;
-            const { chat_id,message } = req.body;
+            let { chat_id,message } = req.body;
+            if(chat_id == 0){
+                const chat = await Chat.create({"uid":user.id});
+                chat_id = chat.id
+            }
             await Bot_chat.create({"uid":user.id,chat_id,sender:"user",message});
             res.status(200).send({
                 flag:true,
-                message: "Message sent"
+                message: "Message sent",
+                chat_id
             });
         } catch (error) {
             console.error('Error in setup_profile:', error);
