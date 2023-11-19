@@ -220,12 +220,12 @@ module.exports = {
             let expert;
             if(task.type == "ticket"){
                 expert = await Executive.findOne({
-                    
+
                     where: { id: task.executive_id }
                 });
             }else{
                 expert = await User.findOne({
-                    
+
                     where: { id: task.expert_id }
                 });
             }
@@ -241,7 +241,7 @@ module.exports = {
                 ...task.dataValues,
                 category_name: category ? category.category_name : null,
                 expert: expert ? expert.dataValues : null,
-                task_status: task_status ? task_status.dataValues : null
+                task_status: task_status ? task_status.dataValues : []
             };
     
             res.status(200).send({
@@ -310,7 +310,7 @@ module.exports = {
             const response = {
                 ...booking.dataValues,
                 category_name: category ? category.category_name : null,
-                booking_status: booking_status ? booking_status.dataValues : null
+                booking_status: booking_status ? booking_status.dataValues : []
             };
             res.status(200).send({
                 flag:true,
