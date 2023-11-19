@@ -159,7 +159,12 @@ module.exports = {
                 order: [['id', 'DESC']],
                 limit: 1
             });
-            const bot_chat = await Bot_chat.find({"chat_id":chat.id});
+            let bot_chat;
+            if(chat){
+                bot_chat = await Bot_chat.find({"chat_id":chat.id});
+            }else{
+                bot_chat = [];
+            }
             res.status(200).send({
                 flag: true,
                 message: "Chat data fetch",
@@ -174,5 +179,22 @@ module.exports = {
                 message: 'Internal Server Error ' + error.message
             });
         }
-    }
+    },
+    bot_chat_message: async (req, res) => {
+        try {
+            const user = req.user;
+            const { chat_id,message } = req.body;
+            await Bot_chat.create({"uid":user.id,chat_id,sender:"user",message});
+            res.status(200).send({
+                flag:true,
+                message: "Message sent"
+            });
+        } catch (error) {
+            console.error('Error in setup_profile:', error);
+            res.status(500).send({
+                flag:false,
+                message: 'Internal Server Error ' + error.message
+            });
+        }
+    },
 };
