@@ -3,7 +3,9 @@ const User = db.User;
 const Preference = db.Preference;
 const Get_subscription = db.Get_subscription;
 const User_subscription = db.User_subscription;
+const Category = db.Category;
 const { uploadFile } = require('../../../config/aws-bucket');
+const Sequelize = require('sequelize');
 
 
 module.exports = {
@@ -136,10 +138,20 @@ module.exports = {
             if (!user) {
                 return res.status(404).send({ message: "User not found" });
             }else{
+                const pre = await Preference.findAll({attributes: ['cid'],where:{"uid":user.id}});
+                const preid = pre.map(es => es.cid);
+                const preference = await Category.findAll({
+                    where: {
+                        id: {
+                            [Sequelize.Op.in]: preid
+                        }
+                    }
+                });
                 res.status(200).send({
                     flag:true,
                     message: "User data successfully",
-                    user
+                    user,
+                    preference
                 });
             }
         } catch (error) {
