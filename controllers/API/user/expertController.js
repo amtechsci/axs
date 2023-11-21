@@ -7,6 +7,7 @@ const Review = db.Review;
 const Expert_skills = db.Expert_skills;
 const Category = db.Category;
 const Chat = db.Chat;
+const Expert_slots = db.Expert_slots;
 const Sequelize = require('sequelize');
 
 module.exports = {
@@ -212,6 +213,19 @@ module.exports = {
                 flag:false,
                 message: 'Internal Server Error ' + error.message
             });
+        }
+    },
+    get_expert_slots: async (req, res) => {
+        try {
+            const user = req.user;
+            const { expert_id } = req.query;
+            const slot = await Expert_slots.findAll({
+                where : {expert_id:expert_id}
+            });
+            res.status(201).send({flag:true, message: 'Availability slot fetch successfully', slot });
+        } catch (error) {
+            console.error('Error in creating availability slot:', error);
+            res.status(500).send({flag:false, message: 'Internal Server Error' });
         }
     },
 };

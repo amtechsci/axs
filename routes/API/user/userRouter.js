@@ -36,5 +36,6 @@ protectedRouter.post('/add-expert-review', expertController.add_review);
 protectedRouter.get('/bot-chat-list', expertController.bot_chat_list);
 protectedRouter.get('/bot-chat-history', expertController.bot_chat_history);
 protectedRouter.post('/bot-chat-message', expertController.bot_chat_message);
+protectedRouter.get('/get-expert-slots', expertController.get_expert_slots);
 
 module.exports = protectedRouter;

@@ -21,7 +21,7 @@ module.exports = {
             const user = req.user;
             const { cid, page } = req.query;
             let ccid = cid ? cid : 0;
-            let cpage = page ? parseInt(page) : 1; // Ensure that the page is an integer
+            let cpage = page ? parseInt(page) : 1;
             let pageSize = 50;
             const categories = await Category.findAll({
                 where: {

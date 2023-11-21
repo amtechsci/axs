@@ -14,7 +14,12 @@ const s3Client = new S3Client({
 // Configure multer to use multer-s3 for uploading directly to S3
 const upload = multer({
   fileFilter: function (req, file, cb) {
-    const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+    const allowedTypes = ['image/png',
+     'image/jpeg',
+      'image/jpg',
+      'application/pdf',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
     if (!allowedTypes.includes(file.mimetype)) {
         return cb(new Error('Unsupported file type'), false);
     }
