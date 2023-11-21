@@ -14,6 +14,7 @@ protectedRouter.post('/update-document', upload.array('document_file',5), expert
 protectedRouter.post('/setup-profile', expertController.setup_profile);
 protectedRouter.get('/get-user', expertController.get_user);
 protectedRouter.get('/category', categoryController.category);
+protectedRouter.get('/notification', categoryController.notification);
 protectedRouter.get('/expert-category', categoryController.expert_category);
 protectedRouter.get('/task', expertController.task);
 protectedRouter.get('/task-details', expertController.task_details);
