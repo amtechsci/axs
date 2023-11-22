@@ -9,6 +9,7 @@ const Expert_skills = db.Expert_skills;
 const Expert_slots = db.Expert_slots;
 const Expert_bank_account = db.Expert_bank_account;
 const Withdraw = db.Withdraw;
+const Task_status = db.Task_status;
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 const moment = require('moment');
@@ -226,37 +227,55 @@ module.exports = {
             const task = await Task.findAll({
                 where:{expert_id:user.id}
             });
-            res.status(200).send({
-                flag:true,
-                message: "Task fetch successfully",
-                task
-            });
+            res.status(200).send({flag:true,message: "Task fetch successfully",task});
         } catch (error) {
             console.error('Error in setup_profile:', error);
-            res.status(500).send({
-                flag:false,
-                message: 'Internal Server Error ' + error.message
-            });
+            res.status(500).send({flag:false,message: 'Internal Server Error ' + error.message});
         }
     },
     task_details: async (req, res) => {
         try {
             const user = req.user;
             const { tid } = req.query;
-            const task = await Task.findOne({
-                where: {
-                    id: tid
-                }
+            const task = await Task.findOne({where: {id: tid}});
+            if (!task) {
+                return res.status(404).send({flag: false,message: "Task not found"});
+            }
+            let customer;
+            if(task.type == "ticket"){
+                customer = await Executive.findOne({
+                    where: { id: task.uid }
+                });
+            }else{
+                customer = await User.findOne({
+                    where: { id: task.uid }
+                });
+            }
+            const category = await Category.findOne({
+                where: { id: task.cid }
             });
+            const task_status = await Task_status.findAll({
+                attributes: ['status','created_at'],
+                where: { task_id: task.id }
+            });
+            
+            const response = {
+                ...task.dataValues,
+                category_name: category ? category.category_name : null,
+                category_img: category ? category.category_img : null,
+                customer: customer ? customer.dataValues : null,
+                task_status: task_status ? task_status : []
+            };
+    
             res.status(200).send({
-                flag:true,
-                message: "Task fetch successfully",
-                task
+                flag: true,
+                message: "Task fetched successfully",
+                task: response
             });
         } catch (error) {
-            console.error('Error in setup_profile:', error);
+            console.error('Error in task_details:', error);
             res.status(500).send({
-                flag:false,
+                flag: false,
                 message: 'Internal Server Error ' + error.message
             });
         }

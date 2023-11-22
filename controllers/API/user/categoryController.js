@@ -211,7 +211,6 @@ module.exports = {
                     id: tid
                 }
             });
-    
             if (!task) {
                 return res.status(404).send({
                     flag: false,

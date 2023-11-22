@@ -1,0 +1,94 @@
+@include('head')
+  <!-- Main Sidebar Container -->
+  <aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <!-- Brand Logo -->
+    <a href="index3.html" class="brand-link">
+      <img src="/logo.svg" alt="AXS Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+      <span class="brand-text font-weight-light">AXS</span>
+    </a>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="form-inline">
+        <div class="input-group" data-widget="sidebar-search">
+          <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
+          <div class="input-group-append">
+            <button class="btn btn-sidebar">
+              <i class="fas fa-search fa-fw"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+@include('sidebar')
+    </div>
+  </aside>
+  <div class="content-wrapper">
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-12">
+              <div class="card-body p-0">
+                <div class="bs-stepper">
+                  <div class="bs-stepper-header" role="tablist">
+                    <!-- your steps here -->
+                    <div class="step" data-target="#logins-part">
+                      <button type="button" class="step-trigger" role="tab" aria-controls="logins-part" id="logins-part-trigger">
+                        <span class="bs-stepper-circle">1</span>
+                        <span class="bs-stepper-label">Add Lorry</span>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="bs-stepper-content">
+                    <form method="post">@csrf
+                    <div id="logins-part" class="row" role="tabpanel" aria-labelledby="logins-part-trigger">
+                      <div class="col-6">
+                      <div class="form-group">
+                        <label for="exampleInputEmail1">Name</label>
+                        <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Enter name" name="name">
+                      </div>
+                      </div>
+                      <div class="col-6">
+                      <div class="form-group">
+                        <label for="exampleInputPassword1">Mobile</label>
+                        <input type="number" class="form-control" id="exampleInputPassword1" placeholder="Mobile" name="mobile">
+                      </div>
+                      </div>
+                      <div class="col-6">
+                      <div class="form-group">
+                        <label for="exampleInputPassword1">Vehicle Number</label>
+                        <input type="text" class="form-control" id="exampleInputPassword1" placeholder="Vehicle Number" name="vehicle_number">
+                      </div>
+                      </div>
+                      <div class="col-6">
+                      <div class="form-group">
+                        <label for="exampleInputPassword1">Wheel</label>
+                        <input type="number" class="form-control" id="exampleInputPassword1" placeholder="Wheel" name="wheel">
+                      </div>
+                      </div>
+                      <div class="col-6">
+                      <div class="form-group">
+                        <label for="exampleInputPassword1">Lorry type</label>
+                        <input type="text" class="form-control" id="exampleInputPassword1" placeholder="Lorry type" name="truck_type">
+                      </div>
+                      </div>
+                      <div class="col-6">
+                      <div class="form-group">
+                        <label for="exampleInputPassword1">Lorry capacity</label>
+                        <input type="number" class="form-control" id="exampleInputPassword1" placeholder="Lorry capacity" name="truck_capacity">
+                      </div>
+                      </div>
+                      <div class="col-6">
+                      <button class="btn btn-primary" type="submit">Add Lorry</button>
+                      </div>
+                    </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+  @include('foot')
