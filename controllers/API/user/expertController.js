@@ -222,7 +222,7 @@ module.exports = {
             const slot = await Expert_slots.findAll({
                 where : {expert_id:expert_id}
             });
-            res.status(201).send({flag:true, message: 'Availability slot fetch successfully', slot });
+            res.status(200).send({flag:true, message: 'Availability slot fetch successfully', slot });
         } catch (error) {
             console.error('Error in creating availability slot:', error);
             res.status(500).send({flag:false, message: 'Internal Server Error' });

@@ -318,7 +318,7 @@ module.exports = {
                     createdSlots.push(newSlot);
                 }
             }
-            res.status(201).send({ flag: true, message: 'Availability slots created successfully', createdSlots });
+            res.status(200).send({ flag: true, message: 'Availability slots created successfully', createdSlots });
         } catch (error) {
             console.error('Error in creating availability slots:', error);
             res.status(500).send({ flag: false, message: 'Internal Server Error' });
@@ -331,7 +331,7 @@ module.exports = {
             const newSlot = await Expert_slots.findAll({
                 where : {expert_id:user.id}
             });
-            res.status(201).send({flag:true, message: 'Availability slot created successfully', newSlot });
+            res.status(200).send({flag:true, message: 'Availability slot created successfully', newSlot });
         } catch (error) {
             console.error('Error in creating availability slot:', error);
             res.status(500).send({flag:false, message: 'Internal Server Error' });
@@ -345,7 +345,7 @@ module.exports = {
                 expert_id:user.id,
                 bank_name, account_holder_name, account_number, ifsc_code
             });
-            res.status(201).send({flag:true, message: 'Bank account added successfully', newAccount });
+            res.status(200).send({flag:true, message: 'Bank account added successfully', newAccount });
         } catch (error) {
             console.error('Error in creating availability slot:', error);
             res.status(500).send({flag:false, message: 'Internal Server Error' });
@@ -359,7 +359,7 @@ module.exports = {
                 expert_id:user.id,
                 amount
             });
-            res.status(201).send({flag:true, message: 'withdraw request send successfully' });
+            res.status(200).send({flag:true, message: 'withdraw request send successfully' });
         } catch (error) {
             console.error('Error in creating availability slot:', error);
             res.status(500).send({flag:false, message: 'Internal Server Error' });
@@ -371,7 +371,7 @@ module.exports = {
             const withdraw_request = await Withdraw.findAll({
                 where:{expert_id:user.id}
             });
-            res.status(201).send({flag:true, message: 'withdraw request fetch', withdraw_request });
+            res.status(200).send({flag:true, message: 'withdraw request fetch', withdraw_request });
         } catch (error) {
             console.error('Error in creating availability slot:', error);
             res.status(500).send({flag:false, message: 'Internal Server Error' });
