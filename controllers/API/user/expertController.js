@@ -44,7 +44,7 @@ module.exports = {
             const user = req.user;
             const { expert_id } = req.query;
             const expert = await User.findOne({where:{"id":expert_id,"user_type":2}});
-            const expert_skills = await Expert_skills.findAll({attributes: ['cid','experience', 'price'],where:{"uid":expert_id}});
+            const expert_skills = await Expert_skills.findAll({attributes: ['cid', 'one_hour_price', 'half_hour_price'],where:{"uid":expert_id}});
             const total_review = await Review.count({where:{"uid":expert_id}});
             const total_task = await Task.count({where:{expert_id}});
             const expertSkillsPromises = expert_skills.map(es => 

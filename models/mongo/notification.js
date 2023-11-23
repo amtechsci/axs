@@ -14,6 +14,10 @@ const notificationSchema = new mongoose.Schema({
         type: String,
         maxlength: 155,
         required: true
+    },
+    img: {
+        type: String,
+        required: true
     }
 }, {
     timestamps: { 

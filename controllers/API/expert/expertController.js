@@ -302,16 +302,29 @@ module.exports = {
     expert_slots: async (req, res) => {
         try {
             const user = req.user;
-            const { date, start_time, end_time, is_active } = req.body;
-            const newSlot = await Expert_slots.create({
-                expert_id:user.id, date, start_time, end_time, is_active
-            });
-            res.status(201).send({flag:true, message: 'Availability slot created successfully', newSlot });
+            const datesWithSlots = req.body; // Expecting an array of objects
+            let createdSlots = [];
+            for (const dateSlot of datesWithSlots) {
+                const { date, slots } = dateSlot;
+                for (const slot of slots) {
+                    const { start_time, end_time, is_active } = slot;
+                    const newSlot = await Expert_slots.create({
+                        expert_id: user.id,
+                        date,
+                        start_time,
+                        end_time,
+                        is_active
+                    });
+                    createdSlots.push(newSlot);
+                }
+            }
+            res.status(201).send({ flag: true, message: 'Availability slots created successfully', createdSlots });
         } catch (error) {
-            console.error('Error in creating availability slot:', error);
-            res.status(500).send({flag:false, message: 'Internal Server Error' });
+            console.error('Error in creating availability slots:', error);
+            res.status(500).send({ flag: false, message: 'Internal Server Error' });
         }
     },
+    
     get_expert_slots: async (req, res) => {
         try {
             const user = req.user;

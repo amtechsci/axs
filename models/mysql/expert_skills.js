@@ -21,7 +21,11 @@ module.exports = (sequelize) => {
       type: DataTypes.STRING(25),
       allowNull: true
     },
-    price: {
+    one_hour_price: {
+      type: DataTypes.STRING(7),
+      allowNull: true
+    },
+    half_hour_price: {
       type: DataTypes.STRING(7),
       allowNull: true
     },
