@@ -176,7 +176,7 @@ module.exports = {
     task_analytics: async (req, res) => {
         try {
             const user = req.user;
-            const taskCountByStatus = await Task.findAll({
+            const taskStatus = await Task.findAll({
                 attributes: ['status', [Sequelize.fn('COUNT', Sequelize.col('id')), 'taskCount']],
                 where: { expert_id:user.id },
                 group: ['status']
@@ -184,7 +184,7 @@ module.exports = {
             res.status(200).send({
                 flag:true,
                 message: "Task fetch successfully",
-                taskCountByStatus
+                taskStatus
             });
         } catch (error) {
             console.error('Error in setup_profile:', error);
@@ -224,72 +224,74 @@ module.exports = {
     task: async (req, res) => {
         try {
             const user = req.user;
-            const task = await Task.findAll({
-                where:{expert_id:user.id}
+            const tasks = await Task.findAll({
+                where: { expert_id: user.id }
             });
-            res.status(200).send({flag:true,message: "Task fetch successfully",task});
+            for (const task of tasks) {
+                const category = await Category.findOne({ where: { id: task.cid } });
+                task.dataValues.category = category ? category.dataValues : null;
+                if (category && category.parent_id) {
+                    const parentCategory = await Category.findOne({ where: { id: category.parent_id } });
+                    task.dataValues.parentCategory = parentCategory ? parentCategory.dataValues : null;
+                } else {
+                    task.dataValues.parentCategory = null;
+                }
+            }
+            res.status(200).send({ flag: true, message: "Task fetched successfully", task: tasks });
         } catch (error) {
             console.error('Error in setup_profile:', error);
-            res.status(500).send({flag:false,message: 'Internal Server Error ' + error.message});
+            res.status(500).send({ flag: false, message: 'Internal Server Error ' + error.message });
         }
-    },
+    },    
     task_details: async (req, res) => {
         try {
             const user = req.user;
             const { tid } = req.query;
-            const task = await Task.findOne({where: {id: tid}});
+            const task = await Task.findOne({ where: { id: tid } });
             if (!task) {
-                return res.status(404).send({flag: false,message: "Task not found"});
+                return res.status(404).send({ flag: false, message: "Task not found" });
             }
+    
+            // Fetch customer details
             let customer;
-            if(task.type == "ticket"){
-                customer = await Executive.findOne({
-                    where: { id: task.uid }
-                });
-            }else{
-                customer = await User.findOne({
-                    where: { id: task.uid }
-                });
+            if (task.type == "ticket") {
+                customer = await Executive.findOne({ where: { id: task.uid } });
+            } else {
+                customer = await User.findOne({ where: { id: task.uid } });
             }
-            const category = await Category.findOne({
-                where: { id: task.cid }
-            });
+
+            const category = await Category.findOne({ where: { id: task.cid } });
+            let parentCategory = null;
+            if (category && category.parent_id) {
+                parentCategory = await Category.findOne({ where: { id: category.parent_id } });
+            }
             const task_status = await Task_status.findAll({
-                attributes: ['status','created_at'],
+                attributes: ['status', 'created_at'],
                 where: { task_id: task.id }
             });
-            
+
             const response = {
                 ...task.dataValues,
                 category_name: category ? category.category_name : null,
                 category_img: category ? category.category_img : null,
+                parent_category: parentCategory ? parentCategory.dataValues : null,
                 customer: customer ? customer.dataValues : null,
-                task_status: task_status ? task_status : []
+                task_status: task_status || []
             };
     
-            res.status(200).send({
-                flag: true,
-                message: "Task fetched successfully",
-                task: response
-            });
+            res.status(200).send({ flag: true, message: "Task fetched successfully", task: response });
         } catch (error) {
             console.error('Error in task_details:', error);
-            res.status(500).send({
-                flag: false,
-                message: 'Internal Server Error ' + error.message
-            });
+            res.status(500).send({ flag: false, message: 'Internal Server Error ' + error.message });
         }
     },
+    
     expert_slots: async (req, res) => {
         try {
             const user = req.user;
             const { date, start_time, end_time, is_active } = req.body;
             const newSlot = await Expert_slots.create({
-                expert_id:user.id,
-                date,
-                start_time,
-                end_time,
-                is_active
+                expert_id:user.id, date, start_time, end_time, is_active
             });
             res.status(201).send({flag:true, message: 'Availability slot created successfully', newSlot });
         } catch (error) {

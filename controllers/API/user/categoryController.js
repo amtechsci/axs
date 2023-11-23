@@ -186,20 +186,23 @@ module.exports = {
     task: async (req, res) => {
         try {
             const user = req.user;
-            const task = await Task.findAll({
-                where:{uid:user.id}
+            const tasks = await Task.findAll({
+                where: { uid: user.id }
             });
-            res.status(200).send({
-                flag:true,
-                message: "Task fetch successfully",
-                task
-            });
+            for (const task of tasks) {
+                const category = await Category.findOne({ where: { id: task.cid } });
+                task.dataValues.category = category ? category.dataValues : null;
+                if (category && category.parent_id) {
+                    const parentCategory = await Category.findOne({ where: { id: category.parent_id } });
+                    task.dataValues.parentCategory = parentCategory ? parentCategory.dataValues : null;
+                } else {
+                    task.dataValues.parentCategory = null;
+                }
+            }
+            res.status(200).send({ flag: true, message: "Task fetched successfully", task: tasks });
         } catch (error) {
             console.error('Error in setup_profile:', error);
-            res.status(500).send({
-                flag:false,
-                message: 'Internal Server Error ' + error.message
-            });
+            res.status(500).send({ flag: false, message: 'Internal Server Error ' + error.message });
         }
     },
     task_details: async (req, res) => {
@@ -229,9 +232,11 @@ module.exports = {
                     where: { id: task.expert_id }
                 });
             }
-            const category = await Category.findOne({
-                where: { id: task.cid }
-            });
+            const category = await Category.findOne({ where: { id: task.cid } });
+            let parentCategory = null;
+            if (category && category.parent_id) {
+                parentCategory = await Category.findOne({ where: { id: category.parent_id } });
+            }
             const task_status = await Task_status.findAll({
                 attributes: ['status','created_at'],
                 where: { task_id: task.id }
