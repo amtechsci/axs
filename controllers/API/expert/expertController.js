@@ -176,24 +176,37 @@ module.exports = {
     task_analytics: async (req, res) => {
         try {
             const user = req.user;
-            const taskStatus = await Task.findAll({
+            let taskStatus = await Task.findAll({
                 attributes: ['status', [Sequelize.fn('COUNT', Sequelize.col('id')), 'taskCount']],
-                where: { expert_id:user.id },
+                where: { expert_id: user.id },
                 group: ['status']
-            });            
+            });
+    
+            // Convert taskStatus to a more readable format
+            const statusMapping = {
+                1: "ongoing",
+                2: "complete",
+                3: "canceled"
+            };
+    
+            taskStatus = taskStatus.map(item => ({
+                ...item.dataValues,
+                status: statusMapping[item.dataValues.status]
+            }));
+    
             res.status(200).send({
-                flag:true,
-                message: "Task fetch successfully",
+                flag: true,
+                message: "Task analytics fetched successfully",
                 taskStatus
             });
         } catch (error) {
-            console.error('Error in setup_profile:', error);
+            console.error('Error in task_analytics:', error);
             res.status(500).send({
-                flag:false,
+                flag: false,
                 message: 'Internal Server Error ' + error.message
             });
         }
-    },
+    },    
     today_appointment: async (req, res) => {
         try {
             const user = req.user;
