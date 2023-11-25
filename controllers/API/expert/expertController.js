@@ -181,23 +181,23 @@ module.exports = {
                 where: { expert_id: user.id },
                 group: ['status']
             });
-    
-            // Convert taskStatus to a more readable format
             const statusMapping = {
                 1: "ongoing",
                 2: "complete",
                 3: "canceled"
             };
-    
             taskStatus = taskStatus.map(item => ({
                 ...item.dataValues,
                 status: statusMapping[item.dataValues.status]
             }));
-    
+            var total = taskStatus[0].taskCount + taskStatus[1].taskCount + taskStatus[2].taskCount;
+            const progress = {"total_in_progress":taskStatus[0].taskCount,"percentage":(taskStatus[1].taskCount/total)*100}
             res.status(200).send({
                 flag: true,
                 message: "Task analytics fetched successfully",
-                taskStatus
+                taskStatus,
+                progress
+
             });
         } catch (error) {
             console.error('Error in task_analytics:', error);
