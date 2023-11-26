@@ -32,15 +32,26 @@
     gap: 10.97px;
     cursor: pointer;
 }
+
 .custom-checkbox input[type="checkbox"] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    cursor: pointer;
     opacity: 0;
-    width: 0;
-    height: 0;
+    z-index: 2;
 }
+
 .custom-checkbox label {
+    position: relative;
+    z-index: 1;
     cursor: pointer;
 }
-.custom-checkbox input[type="checkbox"]:checked + label {
+
+.selectchech{
     background-color: #0D0F13;
     color: #fff;
 }
@@ -124,9 +135,9 @@
                 </svg></span>
           </div>
           Permissions
-          <div class="custom-checkbox">
-            <input type="checkbox" id="experienceCheckbox" />
-            <label for="experienceCheckbox">Manage experiences</label>
+          <div class="custom-checkbox" id="selectchech">
+            <input type="checkbox" id="experienceCheckbox" onclick="selectchech(this)"/>
+            <label for="experienceCheckbox" style="margin: 0;">Manage experiences</label>
         </div>        
       </div>      
       </div>
@@ -137,3 +148,13 @@
     </div>
   </div>
 </div>
+<script>
+  function selectchech(checkbox){
+      var customCheckboxDiv = document.querySelector('.custom-checkbox');
+      if(checkbox.checked) {
+          customCheckboxDiv.classList.add('selectchech');
+      } else {
+          customCheckboxDiv.classList.remove('selectchech');
+      }
+  }
+</script>
