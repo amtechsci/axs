@@ -1,0 +1,139 @@
+<%- include('head'); -%>
+<%- include('sidebar') -%>
+<style>
+  .borderless td, .borderless th {
+    border: none;
+  }
+  .form-group .input-wrapper {
+    position: relative;
+}
+
+.form-group .icon {
+    position: absolute;
+    /* Adjust these values as needed to position your icon */
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.form-group input {
+    padding-left: 30px; /* Adjust as needed based on icon size */
+}
+.custom-checkbox {
+    position: relative;
+    width: 198px;
+    height: 44px;
+    border-radius: 43.89px;
+    border: 1px solid #0D0F13;
+    color: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10.97px;
+    cursor: pointer;
+}
+.custom-checkbox input[type="checkbox"] {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.custom-checkbox label {
+    cursor: pointer;
+}
+.custom-checkbox input[type="checkbox"]:checked + label {
+    background-color: #0D0F13;
+    color: #fff;
+}
+
+</style>
+  <div class="content-wrapper">
+    <section class="content-header">
+      <div class="container-fluid pr-3">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1>User roles</h1>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content">
+      <div class="container-fluid pr-3">
+        <div class="row">
+          <div class="col-12">
+              <div class="d-flex justify-content-between align-items-center">
+                <div><h3 class="card-title">All user roles</h3></div>
+                <div><button class="btn bg-black" data-toggle="modal" data-target="#exampleModalCenter">Add role</button></div>
+              </div>
+              <div class="table-responsive">
+                <table id="example2" class="table table-hover borderless">
+                  <thead>
+                  <tr>
+                    <th>Role name</th>
+                    <th>Total users</th>
+                    <th>Created on</th>
+                    <th>Actions</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr>
+                    <td>Administator</td>
+                    <td>2</td>
+                    <td>09/12/2023</td>
+                    <td>
+                      <a href="#"><img src="/icon/Edit.svg" style="width:20px;height:20px;" class="m-1"></a>
+                      <a href="#"><img src="/icon/Delete.svg" style="width:20px;height:20px;" class="m-1"></a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Customer</td>
+                    <td>2</td>
+                    <td>09/12/2023</td>
+                    <td>
+                      <a href="#"><img src="/icon/Edit.svg" style="width:20px;height:20px;" class="m-1"></a>
+                      <a href="#"><img src="/icon/Delete.svg" style="width:20px;height:20px;" class="m-1"></a>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+<%- include('foot') -%>
+
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalCenterTitle">Add/Edit a new role</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group icon-input">
+          <label for="roleName">Role name</label>
+          <div class="input-wrapper">
+              <input type="text" class="form-control" id="roleName" style="
+              border-radius: 20px;padding-top: 23px;padding-bottom: 23px;">
+              <span class="icon"><svg width="16" height="19" viewBox="0 0 16 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M7.87972 12.2593C4.36856 12.2593 1.37012 12.7901 1.37012 14.9162C1.37012 17.0423 4.34954 17.5922 7.87972 17.5922C11.3909 17.5922 14.3885 17.0604 14.3885 14.9352C14.3885 12.81 11.4099 12.2593 7.87972 12.2593Z" stroke="#6E7076" stroke-width="1.6341" stroke-linecap="round" stroke-linejoin="round"/>
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M7.87963 9.22662C10.1838 9.22662 12.0513 7.35821 12.0513 5.05404C12.0513 2.74987 10.1838 0.882324 7.87963 0.882324C5.57546 0.882324 3.70706 2.74987 3.70706 5.05404C3.69927 7.35043 5.55471 9.21883 7.85024 9.22662H7.87963Z" stroke="#6E7076" stroke-width="1.6341" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg></span>
+          </div>
+          Permissions
+          <div class="custom-checkbox">
+            <input type="checkbox" id="experienceCheckbox" />
+            <label for="experienceCheckbox">Manage experiences</label>
+        </div>        
+      </div>      
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -181,17 +181,30 @@ module.exports = {
                 where: { expert_id: user.id },
                 group: ['status']
             });
+            
             const statusMapping = {
                 1: "ongoing",
                 2: "complete",
                 3: "canceled"
             };
-            taskStatus = taskStatus.map(item => ({
-                ...item.dataValues,
-                status: statusMapping[item.dataValues.status]
-            }));
+            
+            // Check if taskStatus is empty
+            if (taskStatus.length === 0) {
+                // If no tasks found, set taskCount to 0 for each status
+                taskStatus = Object.keys(statusMapping).map(key => ({
+                    status: statusMapping[key],
+                    taskCount: 0
+                }));
+            } else {
+                // If tasks are found, map and transform the data
+                taskStatus = taskStatus.map(item => ({
+                    ...item.dataValues,
+                    status: statusMapping[item.dataValues.status]
+                }));
+            }            
             var total = taskStatus[0].taskCount + taskStatus[1].taskCount + taskStatus[2].taskCount;
-            const progress = {"total_in_progress":taskStatus[0].taskCount,"percentage":(taskStatus[1].taskCount/total)*100}
+            let percentage = (taskStatus[1].taskCount/total)*100;
+            const progress = {"total_in_progress":taskStatus[0].taskCount,"percentage":percentage ? percentage : 0};
             res.status(200).send({
                 flag: true,
                 message: "Task analytics fetched successfully",
