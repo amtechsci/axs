@@ -269,6 +269,24 @@ module.exports = {
             res.status(500).send({ flag: false, message: 'Internal Server Error ' + error.message });
         }
     },    
+    update_task: async (req, res) => {
+        try {
+            const user = req.user;
+            const { tid,status } = req.query;
+            const task = await Task.findOne({ where: { id: tid } });
+            if (!task) {
+                return res.status(404).send({ flag: false, message: "Task not found" });
+            }
+            task.status = status;
+            task.save();
+            let statusmess = status == 1 ? 'Pending' : (status == 2 ? 'Task in progress' : 'Cancel');
+            Task_status.create({"task_id":tid,status:statusmess});
+            res.status(200).send({ flag: true, message: "Task Status updated"});
+        } catch (error) {
+            console.error('Error in task_details:', error);
+            res.status(500).send({ flag: false, message: 'Internal Server Error ' + error.message });
+        }
+    },   
     task_details: async (req, res) => {
         try {
             const user = req.user;

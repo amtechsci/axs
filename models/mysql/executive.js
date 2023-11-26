@@ -67,6 +67,11 @@ module.exports = (sequelize) => {
       allowNull: true,
       defaultValue:1
     },
+    user_role: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      defaultValue:1
+    },
     created_at: {
       type: DataTypes.DATE,
       allowNull: false,

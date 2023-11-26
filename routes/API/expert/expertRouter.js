@@ -17,6 +17,7 @@ protectedRouter.get('/category', categoryController.category);
 protectedRouter.get('/notification', categoryController.notification);
 protectedRouter.get('/expert-category', categoryController.expert_category);
 protectedRouter.get('/task', expertController.task);
+protectedRouter.get('/update-task', expertController.update_task);
 protectedRouter.get('/task-details', expertController.task_details);
 protectedRouter.post('/set-expert-slots', expertController.expert_slots);
 protectedRouter.get('/get-expert-slots', expertController.get_expert_slots);

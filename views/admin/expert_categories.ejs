@@ -82,36 +82,46 @@
                 <table id="example2" class="table table-hover borderless">
                   <thead>
                   <tr>
-                    <th>Role name</th>
-                    <th>Total users</th>
+                    <th>Category</th>
+                    <th>Description</th>
                     <th>Created on</th>
                     <th>Actions</th>
                   </tr>
                   </thead>
                   <tbody>
-                    <% roles.forEach(function(role) { %>
+                    <% category.forEach(function(mainCate, mainIndex) { %>
                       <tr>
-                        <td><%- role.role_type %></td>
-                        <td>2</td>
-                        <td>09/12/2023</td>
+                        <td><%- mainCate.category_name %></td>
+                        <td><%- mainCate.category_description %></td>
+                        <td>
+                          <% 
+                          let mainCateDate = new Date(mainCate.created_at);
+                          let formattedMainCateDate = mainCateDate.toLocaleDateString('en-US');
+                          %><%- formattedMainCateDate %>
+                        </td>
                         <td>
                           <a href="#"><img src="/icon/Edit.svg" style="width:20px;height:20px;" class="m-1"></a>
                           <a href="#"><img src="/icon/Delete.svg" style="width:20px;height:20px;" class="m-1"></a>
+                          <span id="arrow<%= mainIndex %>" onclick="toggleSubCategories('subCate<%= mainIndex %>', '<%= mainIndex %>')" style="cursor:pointer;"><img src="/icon/Downarrow.svg"></span>
                         </td>
                       </tr>
-                    <% }) %>
-                      <tr>
-                        <td>Customers</td>
-                        <td>2</td>
-                        <td>09/12/2023</td>
-                        <td></td>
-                      </tr>
-                      <tr>
-                        <td>Experts</td>
-                        <td>2</td>
-                        <td>09/12/2023</td>
-                        <td></td>
-                      </tr>
+                      <% mainCate.sub_category.forEach(function(subCate, subIndex) { %>
+                        <tr id="subCate<%= mainIndex %>-<%= subIndex %>" class="subCate<%= mainIndex %>" style="display: none;">
+                          <td style="padding-left: 20px;">-- <%- subCate.category_name %></td>
+                          <td><%- subCate.category_description %></td>
+                          <td>
+                            <% 
+                            let subCateDate = new Date(subCate.created_at);
+                            let formattedSubCateDate = subCateDate.toLocaleDateString('en-US');
+                            %><%- formattedSubCateDate %>
+                          </td>
+                          <td>
+                            <a href="#"><img src="/icon/Edit.svg" style="width:20px;height:20px;" class="m-1"></a>
+                            <a href="#"><img src="/icon/Delete.svg" style="width:20px;height:20px;" class="m-1"></a>
+                          </td>
+                        </tr>
+                      <% }) %>
+                    <% }) %>                    
                 </table>
               </div>
           </div>
@@ -143,12 +153,7 @@
           </div>
           Permissions
           <div class="row">
-              <% permissions.forEach(function(pre) { %>
-                <div class="col custom-checkbox bg-<%- pre.id %> m-1">
-                    <input type="checkbox" id="checkbox-<%- pre.id %>" value="<%- pre.id %>" onclick="selectchech(this,'<%- pre.id %>')" />
-                    <label for="checkbox-<%- pre.id %>" style="margin: 0; white-space: nowrap;"><%- pre.permission.charAt(0).toUpperCase() + pre.permission.slice(1).replace(/_/g, ' ') %></label>
-                </div>
-            <% }) %>
+              
           </div>       
       </div>      
       </div>
@@ -167,5 +172,20 @@
       } else {
           customCheckboxDiv.classList.remove('selectchech');
       }
+  }
+</script>
+<script>
+  function toggleSubCategories(subCateClass, mainIndex) {
+    var arrow = document.getElementById('arrow' + mainIndex);
+    var subCategories = document.getElementsByClassName(subCateClass);
+    for (var i = 0; i < subCategories.length; i++) {
+      if (subCategories[i].style.display === 'none') {
+        subCategories[i].style.display = '';
+        arrow.innerHTML = '<img src="/icon/Uparrow.svg">';
+      } else {
+        subCategories[i].style.display = 'none';
+        arrow.innerHTML = '<img src="/icon/Downarrow.svg">';
+      }
+    }
   }
 </script>

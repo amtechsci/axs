@@ -82,36 +82,33 @@
                 <table id="example2" class="table table-hover borderless">
                   <thead>
                   <tr>
-                    <th>Role name</th>
-                    <th>Total users</th>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Phone No</th>
+                    <th>Email</th>
+                    <th>Gender</th>
                     <th>Created on</th>
                     <th>Actions</th>
                   </tr>
                   </thead>
                   <tbody>
-                    <% roles.forEach(function(role) { %>
+                    <% let i=1; users.forEach(function(user) { %>
                       <tr>
-                        <td><%- role.role_type %></td>
-                        <td>2</td>
-                        <td>09/12/2023</td>
+                        <td><%- i %></td>
+                        <td><%- user.name %></td>
+                        <td><%- user.mobile %></td>
+                        <td><%- user.email %></td>
+                        <td><%- user.gender == 1 ? 'Male' : (user.gender == 2 ? 'Female' : 'NA') %></td>
+                        <td><%
+                          let mysqlDateTime = new Date(user.created_at);
+                          let formattedDate = mysqlDateTime.toLocaleDateString('en-US');
+                          %><%- formattedDate %></td>
                         <td>
                           <a href="#"><img src="/icon/Edit.svg" style="width:20px;height:20px;" class="m-1"></a>
                           <a href="#"><img src="/icon/Delete.svg" style="width:20px;height:20px;" class="m-1"></a>
                         </td>
                       </tr>
-                    <% }) %>
-                      <tr>
-                        <td>Customers</td>
-                        <td>2</td>
-                        <td>09/12/2023</td>
-                        <td></td>
-                      </tr>
-                      <tr>
-                        <td>Experts</td>
-                        <td>2</td>
-                        <td>09/12/2023</td>
-                        <td></td>
-                      </tr>
+                    <% i++; }) %>
                 </table>
               </div>
           </div>
@@ -143,12 +140,6 @@
           </div>
           Permissions
           <div class="row">
-              <% permissions.forEach(function(pre) { %>
-                <div class="col custom-checkbox bg-<%- pre.id %> m-1">
-                    <input type="checkbox" id="checkbox-<%- pre.id %>" value="<%- pre.id %>" onclick="selectchech(this,'<%- pre.id %>')" />
-                    <label for="checkbox-<%- pre.id %>" style="margin: 0; white-space: nowrap;"><%- pre.permission.charAt(0).toUpperCase() + pre.permission.slice(1).replace(/_/g, ' ') %></label>
-                </div>
-            <% }) %>
           </div>       
       </div>      
       </div>

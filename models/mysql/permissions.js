@@ -1,32 +1,16 @@
 const { Model, DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
-  class Category extends Model {}
+  class Permissions extends Model {}
 
-  Category.init({
+  Permissions.init({
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true
     },
-    category_name: {
-      type: DataTypes.STRING(55),
-      allowNull: true
-    },
-    category_img: {
-      type: DataTypes.TEXT,
-      allowNull: true
-    },
-    category_description: {
-      type: DataTypes.TEXT,
-      allowNull: true
-    },
-    parent_id: {
-      type: DataTypes.INTEGER,
-      allowNull: true
-    },
-    category_type: {
-      type: DataTypes.INTEGER,
+    permission: {
+      type: DataTypes.STRING(25),
       allowNull: true
     },
     created_at: {
@@ -41,11 +25,11 @@ module.exports = (sequelize) => {
     }
   }, {
     sequelize,
-    modelName: 'Category',
-    tableName: 'category',
+    modelName: 'Permissions',
+    tableName: 'permissions',
     timestamps: false,
     underscored: true
   });
 
-  return Category;
+  return Permissions;
 };
