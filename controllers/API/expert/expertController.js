@@ -335,9 +335,11 @@ module.exports = {
             const datesWithSlots = req.body; // Expecting an array of objects
             let createdSlots = [];
             for (const dateSlot of datesWithSlots) {
-                const { date, slots } = dateSlot;
+                const { date, slots, isAvailable = true } = dateSlot; // Default isAvailable to true
                 for (const slot of slots) {
-                    const { start_time, end_time, is_active } = slot;
+                    const { start_time, end_time } = slot;
+                    // If isAvailable is false, override is_active to false
+                    const is_active = isAvailable ? slot.is_active : false;
                     const newSlot = await Expert_slots.create({
                         expert_id: user.id,
                         date,
@@ -385,11 +387,15 @@ module.exports = {
         try {
             const user = req.user;
             const { amount } = req.body;
-            await Withdraw.create({
-                expert_id:user.id,
-                amount
-            });
-            res.status(200).send({flag:true, message: 'withdraw request send successfully' });
+            if(user.wallet >= amount){
+                await Withdraw.create({
+                    expert_id:user.id,
+                    amount
+                });
+                res.status(200).send({flag:true, message: 'withdraw request send successfully' });
+            }else{
+                res.status(200).send({flag:true, message: 'you do not have sufficient balance to withdraw'});
+            }
         } catch (error) {
             console.error('Error in creating availability slot:', error);
             res.status(500).send({flag:false, message: 'Internal Server Error' });
