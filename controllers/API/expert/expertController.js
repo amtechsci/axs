@@ -176,7 +176,7 @@ module.exports = {
     task_analytics: async (req, res) => {
         try {
             const user = req.user;
-            let taskStatus = await Task.findAll({
+            let rawTaskStatus = await Task.findAll({
                 attributes: ['status', [Sequelize.fn('COUNT', Sequelize.col('id')), 'taskCount']],
                 where: { expert_id: user.id },
                 group: ['status']
@@ -188,23 +188,22 @@ module.exports = {
                 3: "canceled"
             };
             
-            // Check if taskStatus is empty
-            if (taskStatus.length === 0) {
-                // If no tasks found, set taskCount to 0 for each status
-                taskStatus = Object.keys(statusMapping).map(key => ({
-                    status: statusMapping[key],
-                    taskCount: 0
-                }));
-            } else {
-                // If tasks are found, map and transform the data
-                taskStatus = taskStatus.map(item => ({
-                    ...item.dataValues,
-                    status: statusMapping[item.dataValues.status]
-                }));
-            }            
+            // Convert rawTaskStatus to a more usable format
+            let mappedTaskStatus = rawTaskStatus.reduce((acc, item) => {
+                acc[statusMapping[item.dataValues.status]] = item.dataValues.taskCount;
+                return acc;
+            }, {});
+            
+            // Ensure all statuses are represented
+            taskStatus = Object.keys(statusMapping).map(key => ({
+                status: statusMapping[key],
+                taskCount: mappedTaskStatus[statusMapping[key]] || 0
+            }));
+                       
             var total = taskStatus[0].taskCount + taskStatus[1].taskCount + taskStatus[2].taskCount;
             let percentage = (taskStatus[1].taskCount/total)*100;
-            const progress = {"total_in_progress":taskStatus[0].taskCount,"percentage":percentage ? percentage : 0};
+            let formattedPercentage = parseFloat(percentage.toFixed(2));
+            const progress = {"total_in_progress":taskStatus[0].taskCount,"percentage":formattedPercentage ? formattedPercentage : 0};
             res.status(200).send({
                 flag: true,
                 message: "Task analytics fetched successfully",
@@ -279,7 +278,7 @@ module.exports = {
             }
             task.status = status;
             task.save();
-            let statusmess = status == 1 ? 'Pending' : (status == 2 ? 'Task in progress' : 'Cancel');
+            let statusmess = status == 1 ? 'Task in progress' : (status == 2 ? 'Complete' : 'Cancel');
             Task_status.create({"task_id":tid,status:statusmess});
             res.status(200).send({ flag: true, message: "Task Status updated"});
         } catch (error) {
