@@ -13,6 +13,10 @@ module.exports = (sequelize) => {
       type: DataTypes.INTEGER,
       allowNull: true
     },
+    bank_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true
+    },
     amount: {
       type: DataTypes.STRING(7),
       allowNull: true

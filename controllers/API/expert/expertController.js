@@ -327,30 +327,35 @@ module.exports = {
             console.error('Error in task_details:', error);
             res.status(500).send({ flag: false, message: 'Internal Server Error ' + error.message });
         }
-    },
-    
+    }, 
     expert_slots: async (req, res) => {
         try {
             const user = req.user;
             const datesWithSlots = req.body; // Expecting an array of objects
-            let createdSlots = [];
+            let createdOrUpdatedSlots = [];
             for (const dateSlot of datesWithSlots) {
-                const { date, slots, isAvailable = true } = dateSlot; // Default isAvailable to true
+                const { date, slots, isAvailable = true } = dateSlot;
                 for (const slot of slots) {
                     const { start_time, end_time } = slot;
-                    // If isAvailable is false, override is_active to false
                     const is_active = isAvailable ? slot.is_active : false;
-                    const newSlot = await Expert_slots.create({
+                    const [slotRecord, created] = await Expert_slots.upsert({
                         expert_id: user.id,
                         date,
                         start_time,
                         end_time,
                         is_active
+                    }, {
+                        where: {
+                            expert_id: user.id,
+                            date: date,
+                            start_time: start_time
+                        },
+                        returning: true
                     });
-                    createdSlots.push(newSlot);
+                    createdOrUpdatedSlots.push(slotRecord);
                 }
             }
-            res.status(200).send({ flag: true, message: 'Availability slots created successfully', createdSlots });
+            res.status(200).send({ flag: true, message: 'Availability slots created successfully'});
         } catch (error) {
             console.error('Error in creating availability slots:', error);
             res.status(500).send({ flag: false, message: 'Internal Server Error' });
@@ -386,10 +391,11 @@ module.exports = {
     withdraw_request: async (req, res) => {
         try {
             const user = req.user;
-            const { amount } = req.body;
+            const { amount,bank_id } = req.body;
             if(user.wallet >= amount){
                 await Withdraw.create({
                     expert_id:user.id,
+                    bank_id,
                     amount
                 });
                 res.status(200).send({flag:true, message: 'withdraw request send successfully' });
