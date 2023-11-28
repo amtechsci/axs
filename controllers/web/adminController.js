@@ -4,6 +4,7 @@ const Permissions = db.Permissions;
 const Roles = db.Roles;
 const Executive = db.Executive;
 const Category = db.Category;
+const Get_subscription = db.Get_subscription;
 
 module.exports = {
     login: async (req, res) => {
@@ -168,9 +169,8 @@ module.exports = {
     },
     subscriptions: async (req, res) => {
         try {
-            const permissions = await Permissions.findAll();
-            const roles = await Roles.findAll();
-            res.render('admin/user_roles',{permissions,roles})
+            const get_subscription = await Get_subscription.findAll();
+            res.render('admin/subscriptions',{get_subscription})
         } catch (error) {
             console.error('Error in login:', error);
             res.status(500).send({
