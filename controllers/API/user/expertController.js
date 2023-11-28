@@ -217,15 +217,32 @@ module.exports = {
     },
     get_expert_slots: async (req, res) => {
         try {
-            const user = req.user;
             const { expert_id } = req.query;
-            const slot = await Expert_slots.findAll({
-                where : {expert_id:expert_id}
+            const slots = await Expert_slots.findAll({
+                where: { expert_id: expert_id },
+                order: [['date', 'ASC']] // Ordering by date
             });
-            res.status(200).send({flag:true, message: 'Availability slot fetch successfully', slot });
+    
+            // Restructure slots data
+            const structuredSlots = slots.reduce((acc, slot) => {
+                acc[slot.date] = acc[slot.date] || [];
+                acc[slot.date].push(slot);
+                return acc;
+            }, {});
+    
+            const result = Object.entries(structuredSlots).map(([date, timeslots]) => ({
+                date: date,
+                timeslot: timeslots
+            }));
+    
+            res.status(200).send({
+                flag: true, 
+                message: 'Availability slot fetch successfully', 
+                slot: result
+            });
         } catch (error) {
-            console.error('Error in creating availability slot:', error);
-            res.status(500).send({flag:false, message: 'Internal Server Error' });
+            console.error('Error in fetching availability slot:', error);
+            res.status(500).send({ flag: false, message: 'Internal Server Error' });
         }
-    },
+    }    
 };
