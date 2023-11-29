@@ -18,7 +18,7 @@
     padding-right: 10px;
 }
 
-.form-group input {
+.iconpaddind {
     padding-left: 30px; /* Adjust as needed based on icon size */
 }
 .custom-checkbox {
@@ -57,14 +57,25 @@
     background-color: #0D0F13;
     color: #fff;
 }
-
+#profile_imgDropzone{
+  width: 150px; height: 150px;
+}
+.dz-message{
+  margin: 0px !important;
+}
+.dz-preview{
+  margin: 0px !important;
+}
+.dropzone{
+  padding: 0px !important;
+}
 </style>
   <div class="content-wrapper">
     <section class="content-header">
       <div class="container-fluid pr-3">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>User roles</h1>
+            <h1>Expert</h1>
           </div>
         </div>
       </div>
@@ -75,9 +86,23 @@
         <div class="row">
           <div class="col-12">
               <div class="d-flex justify-content-between align-items-center">
-                <div><h3 class="card-title">All user roles</h3></div>
-                <div><button class="btn bg-black" data-toggle="modal" data-target="#exampleModalCenter">Add role</button></div>
+                <div><h3 class="card-title">All Expert</h3></div>
+                <div><button class="btn bg-black" data-toggle="modal" data-target="#exampleModalCenter">Add expert</button></div>
               </div>
+              <div style="width:100%;overflow: hidden;" class="d-flex justify-content-between mt-3 align-items-center">
+              <div class="form-group icon-input" style="width:95%; float: left; margin-bottom: 0px;">
+                <div class="input-wrapper">
+                  <input type="text" class="form-control iconpaddind" id="roleName" style=" border-radius: 20px;padding-top: 23px;padding-bottom: 23px;">
+                  <span class="icon"><svg width="16" height="19" viewBox="0 0 16 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M7.87972 12.2593C4.36856 12.2593 1.37012 12.7901 1.37012 14.9162C1.37012 17.0423 4.34954 17.5922 7.87972 17.5922C11.3909 17.5922 14.3885 17.0604 14.3885 14.9352C14.3885 12.81 11.4099 12.2593 7.87972 12.2593Z" stroke="#6E7076" stroke-width="1.6341" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M7.87963 9.22662C10.1838 9.22662 12.0513 7.35821 12.0513 5.05404C12.0513 2.74987 10.1838 0.882324 7.87963 0.882324C5.57546 0.882324 3.70706 2.74987 3.70706 5.05404C3.69927 7.35043 5.55471 9.21883 7.85024 9.22662H7.87963Z" stroke="#6E7076" stroke-width="1.6341" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg></span>
+                </div>
+              </div>
+                <div>
+                  <button class="btn bg-black" data-toggle="modal" data-target="#exampleModalCenter"><img src="/icon/Filter.svg"></button>
+                </div>
+            </div>
               <div class="table-responsive">
                 <table id="example2" class="table table-hover borderless">
                   <thead>
@@ -118,45 +143,92 @@
   </div>
 <%- include('foot') -%>
 
-<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+<div class="modal fade bd-example-modal-lg" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalCenterTitle">Add/Edit a new role</h5>
+        <h5 class="modal-title" id="exampleModalCenterTitle">Add/Edit expert</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        <div class="form-group icon-input">
-          <label for="roleName">Role name</label>
-          <div class="input-wrapper">
-              <input type="text" class="form-control" id="roleName" style="
-              border-radius: 20px;padding-top: 23px;padding-bottom: 23px;">
-              <span class="icon"><svg width="16" height="19" viewBox="0 0 16 19" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path fill-rule="evenodd" clip-rule="evenodd" d="M7.87972 12.2593C4.36856 12.2593 1.37012 12.7901 1.37012 14.9162C1.37012 17.0423 4.34954 17.5922 7.87972 17.5922C11.3909 17.5922 14.3885 17.0604 14.3885 14.9352C14.3885 12.81 11.4099 12.2593 7.87972 12.2593Z" stroke="#6E7076" stroke-width="1.6341" stroke-linecap="round" stroke-linejoin="round"/>
-                <path fill-rule="evenodd" clip-rule="evenodd" d="M7.87963 9.22662C10.1838 9.22662 12.0513 7.35821 12.0513 5.05404C12.0513 2.74987 10.1838 0.882324 7.87963 0.882324C5.57546 0.882324 3.70706 2.74987 3.70706 5.05404C3.69927 7.35043 5.55471 9.21883 7.85024 9.22662H7.87963Z" stroke="#6E7076" stroke-width="1.6341" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg></span>
+      <form action="/admin/add-user" method="post">
+        <div class="row"> 
+          <div class="col-12">
+            <div class="form-group">
+              <label>Profile pic</label>
+              <div class="dropzone d-flex align-items-center justify-content-center" id="profile_imgDropzone"></div>
+            </div>  
           </div>
-          Permissions
-          <div class="row">
-          </div>       
-      </div>      
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
+          <div class="col-12 col-md-6">
+            <div class="form-group">
+              <label>Full name</label>
+              <input type="text" name="name" class="form-control"> 
+              <input type="hidden" name="profile_img" value="">
+              <input type="hidden" name="user_type" value="2">
+              <input type="hidden" name="modal" value="user">
+            </div>
+          </div>
+          <div class="col-12 col-md-6">
+            <div class="form-group">
+              <label>Phone no.</label>
+              <input type="number" name="mobile" class="form-control"> 
+            </div>
+          </div>
+          <div class="col-12 col-md-6">
+            <div class="form-group">
+              <label>Email</label>
+              <input type="email" name="email" class="form-control"> 
+            </div>
+          </div>
+          <div class="col-12 col-md-6 col-lg-3">
+            <div class="form-group">
+              <label>Gender</label>
+              <select class="form-control" name="gender">
+                <option value="1">Male</option>
+                <option value="2">Female</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-12 col-md-6 col-lg-3">
+            <div class="form-group">
+              <label>Set 6 Digit Pin</label>
+              <input type="number" name="pin" class="form-control"> 
+            </div>
+          </div>
+          <div class="col-12 d-flex justify-content-center mt-2">
+            <button type="submit" class="btn btn-primary" style="width: 250px;font-size: 20px;">Save & close</button>
+          </div>
+        </div>
+      </form>
       </div>
     </div>
   </div>
 </div>
 <script>
-  function selectchech(checkbox,id){
-      var customCheckboxDiv = document.querySelector('.bg-'+id);
-      if(checkbox.checked) {
-          customCheckboxDiv.classList.add('selectchech');
-      } else {
-          customCheckboxDiv.classList.remove('selectchech');
-      }
+  Dropzone.autoDiscover = false;
+  function setupDropzone(dropzoneId, url, paramName, hiddenInputName) {
+      return new Dropzone(dropzoneId, {
+          url: url,
+          paramName: paramName,
+          maxFiles: 1,
+          acceptedFiles: ".pdf,.jpg,.jpeg,.png",
+          dictDefaultMessage: "Drop files here or click to upload " + paramName,
+          init: function () {
+              this.on("success", function (file, response) {
+                console.log(response);
+                  let input = document.querySelector('input[name="' + hiddenInputName + '"]');
+                  input.value = response.file_url;
+              });
+          }
+      });
   }
+
+  // Setup Dropzones
+  setupDropzone("#profile_imgDropzone", "/admin/file-upload", "file", "profile_img");
+  
+  document.addEventListener('DOMContentLoaded', function () {
+      window.stepper = new Stepper(document.querySelector('.bs-stepper'))
+  })
 </script>

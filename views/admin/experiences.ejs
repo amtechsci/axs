@@ -35,7 +35,7 @@
     cursor: pointer;
 }
 
-.custom-checkbox input[type="checkbox"] {
+.custom-checkbox input[type="radio"] {
     position: absolute;
     top: 0;
     left: 0;
@@ -58,13 +58,13 @@
     color: #fff;
 }
 #profile_imgDropzone{
-  width: 150px; height: 150px;
+  width: 100%; height: 150px;
 }
 .dz-message{
   margin: 0px !important;
 }
 .dz-preview{
-  margin: 0px !important;
+  margin: 0px !important; margin-right:10px !important;
 }
 .dropzone{
   padding: 0px !important;
@@ -75,7 +75,7 @@
       <div class="container-fluid pr-3">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>Employee</h1>
+            <h1>Experiences</h1>
           </div>
         </div>
       </div>
@@ -86,8 +86,8 @@
         <div class="row">
           <div class="col-12">
               <div class="d-flex justify-content-between align-items-center">
-                <div><h3 class="card-title">All Employee</h3></div>
-                <div><button class="btn bg-black" data-toggle="modal" data-target="#exampleModalCenter">Add employee</button></div>
+                <div><h3 class="card-title">All Experiences</h3></div>
+                <div><button class="btn bg-black" data-toggle="modal" data-target="#exampleModalCenter">Create experience</button></div>
               </div>
               <div style="width:100%;overflow: hidden;" class="d-flex justify-content-between mt-3 align-items-center">
               <div class="form-group icon-input" style="width:95%; float: left; margin-bottom: 0px;">
@@ -108,22 +108,22 @@
                   <thead>
                   <tr>
                     <th>Id</th>
-                    <th>Name</th>
-                    <th>Phone No</th>
-                    <th>Email</th>
-                    <th>Gender</th>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>From & To</th>
+                    <th>Price</th>
                     <th>Created on</th>
                     <th>Actions</th>
                   </tr>
                   </thead>
                   <tbody>
-                    <% let i=1; executive.forEach(function(user) { %>
+                    <% let i=1; experience.forEach(function(user) { %>
                       <tr>
                         <td><%- i %></td>
-                        <td><%- user.name %></td>
-                        <td><%- user.mobile %></td>
-                        <td><%- user.email %></td>
-                        <td><%- user.gender == 1 ? 'Male' : (user.gender == 2 ? 'Female' : 'NA') %></td>
+                        <td><%- user.title %></td>
+                        <td><%- user.description %></td>
+                        <td><%- user.from %> - <%- user.to %></td>
+                        <td><%- user.price %></td>
                         <td><%
                           let mysqlDateTime = new Date(user.created_at);
                           let formattedDate = mysqlDateTime.toLocaleDateString('en-US');
@@ -147,54 +147,98 @@
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalCenterTitle">Add/Edit employee</h5>
+        <h5 class="modal-title" id="exampleModalCenterTitle">Add/edit experience, events</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-      <form action="/admin/add-user" method="post">
-        <div class="row"> 
+      <form action="/admin/add-experience" method="post">
+        <div class="row">
+          <div class="col custom-checkbox bg-experience m-1 selectchech">
+              <input type="radio" name="type" id="checkbox-experience" value="experience" onclick="selectchech(this,'experience')" checked />
+              <label for="checkbox-experience" name="type[]" style="margin: 0; white-space: nowrap;">Experience</label>
+          </div>
+          <div class="col custom-checkbox bg-event m-1">
+              <input type="radio" name="type" id="checkbox-event" value="event" onclick="selectchech(this,'event')" />
+              <label for="checkbox-event" style="margin: 0; white-space: nowrap;">Event</label>
+          </div>
+        </div>
+        <div class="row">
           <div class="col-12">
             <div class="form-group">
               <label>Profile pic</label>
               <div class="dropzone d-flex align-items-center justify-content-center" id="profile_imgDropzone"></div>
             </div>  
           </div>
-          <div class="col-12 col-md-6">
+          <div class="col-12 col-md-12">
             <div class="form-group">
-              <label>Full name</label>
-              <input type="text" name="name" id="name" class="form-control"> 
-              <input type="hidden" name="profile_img" id="profile_img" value="">
+              <label>Title</label>
+              <input type="text" name="title" id="title" class="form-control"> 
+              <input type="hidden" name="images" id="images" value="[]">
               <input type="hidden" name="user_role" value="2">
               <input type="hidden" name="modal" value="executive">
             </div>
           </div>
-          <div class="col-12 col-md-6">
+          <div class="col-12 col-md-12">
             <div class="form-group">
-              <label>Phone no.</label>
-              <input type="number" name="mobile" class="form-control"> 
+              <label>Task description</label>
+              <textarea name="description" class="form-control"></textarea>
             </div>
           </div>
-          <div class="col-12 col-md-6">
+          <div class="col-12 col-md-4">
             <div class="form-group">
-              <label>Email</label>
-              <input type="email" name="email" class="form-control"> 
-            </div>
-          </div>
-          <div class="col-12 col-md-6 col-lg-3">
-            <div class="form-group">
-              <label>Gender</label>
-              <select class="form-control" name="gender">
-                <option value="1">Male</option>
-                <option value="2">Female</option>
+              <label>Category</label>
+              <select class="form-control" name="cid" onchange="getsubcat(this)" required>
+                <option value="">Select Category</option>
+                <% categories.forEach(function(category) { %>
+                <option value="<%- category.id %>"><%- category.category_name %></option>
+                <% }) %>
               </select>
             </div>
           </div>
-          <div class="col-12 col-md-6 col-lg-3">
+          <div class="col-12 col-md-4">
             <div class="form-group">
-              <label>Set 6 Digit Pin</label>
-              <input type="number" name="pin" class="form-control"> 
+              <label>Sub category</label>
+              <select class="form-control" name="scid" id="subcategory-select"></select>
+            </div>
+          </div>
+          <div class="col-12 col-md-4">
+            <div class="form-group">
+              <label>Price</label>
+              <input type="number" name="price" class="form-control"> 
+            </div>
+          </div>
+          <div class="col-12 col-md-4">
+            <div class="form-group">
+              <label>Location/Place</label>
+              <input type="text" name="location" class="form-control"> 
+            </div>
+          </div>
+          <div class="col-12 col-md-4">
+            <div class="form-group">
+              <label>Start date</label>
+              <input type="date" name="from" class="form-control"> 
+            </div>
+          </div>
+          <div class="col-12 col-md-4">
+            <div class="form-group">
+              <label>End date</label>
+              <input type="date" name="to" class="form-control"> 
+            </div>
+          </div>
+          <div class="col-12">
+            <div class="form-group">
+              <label>Things to do</label>
+              <div id="things-to-do-container">
+                <div class="d-flex align-items-center things-to-do-item">
+                    <div style="width: 90%;">
+                        <input type="text" name="things_to_do[]" class="form-control">
+                    </div>
+                    <img src="/icon/Delete.svg" style="width:20px;height:20px;" class="delete-icon m-1" onclick="deleteRow(this)">
+                    <img src="/icon/Plus.svg" style="width:20px;height:20px;" class="add-icon m-1" onclick="addRow(this)">
+                </div>
+              </div>            
             </div>
           </div>
           <div class="col-12 d-flex justify-content-center mt-2">
@@ -209,22 +253,24 @@
 <script>
   Dropzone.autoDiscover = false;
   function setupDropzone(dropzoneId, url, paramName, hiddenInputName) {
-      return new Dropzone(dropzoneId, {
-          url: url,
-          paramName: paramName,
-          maxFiles: 1,
-          acceptedFiles: ".pdf,.jpg,.jpeg,.png",
-          dictDefaultMessage: "Drop files here or click to upload " + paramName,
-          init: function () {
-              this.on("success", function (file, response) {
-                console.log(response);
-                  let input = document.querySelector('input[name="' + hiddenInputName + '"]');
-                  input.value = response.file_url;
-              });
-          }
-      });
+        return new Dropzone(dropzoneId, {
+            url: url,
+            paramName: paramName,
+            maxFiles: 5,
+            acceptedFiles: ".pdf,.jpg,.jpeg,.png",
+            dictDefaultMessage: "Drop files here or click to upload " + paramName,
+            init: function () {
+                this.on("success", function (file, response) {
+                  console.log(response);
+                    let input = document.querySelector('input[name="' + hiddenInputName + '"]');
+                    let fileNames = input.value ? JSON.parse(input.value) : [];
+                    fileNames.push(response.document_url);
+                    input.value = JSON.stringify(fileNames);
+                });
+            }
+        });
   }
-  setupDropzone("#profile_imgDropzone", "/admin/file-upload", "file", "profile_img");
+  setupDropzone("#profile_imgDropzone", "/admin/files-upload", "document_file", "images");
   document.addEventListener('DOMContentLoaded', function () {
       window.stepper = new Stepper(document.querySelector('.bs-stepper'))
   });
@@ -232,4 +278,33 @@
     $('#name').val();
     $('#exampleModalCenter').modal('show');
   }
+  function selectchech(checkbox,id){
+      var customCheckboxDiv = document.querySelector('.bg-'+id);
+        document.querySelector('.selectchech').classList.remove('selectchech');
+        customCheckboxDiv.classList.add('selectchech');
+  }
+  function getsubcat(element) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '/admin/getsubcat?cid=' + element.value, true);
+    xhr.onload = function () {
+        if (this.status === 200) {
+            document.getElementById('subcategory-select').innerHTML = this.responseText;
+        } else {
+            console.error('Error in AJAX request');
+        }
+    };
+    xhr.send();
+}
+function addRow(element) {
+    var container = document.getElementById("things-to-do-container");
+    var newItem = element.parentNode.cloneNode(true); // Clone the current item
+    container.appendChild(newItem);
+}
+
+function deleteRow(element) {
+    var item = element.parentNode;
+    if (item.parentNode.childElementCount > 1) { // Ensure at least one row remains
+        item.parentNode.removeChild(item);
+    }
+}
 </script>
