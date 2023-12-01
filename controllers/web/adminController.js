@@ -280,17 +280,34 @@ module.exports = {
     add_experience: async (req, res) => {
         try {
             const {
-                type, title, images, user_role, modal, description,
+                edit_id = 0, type, title, images, user_role, modal, description,
                 cid, scid, price, location, from, to, things_to_do
             } = req.body;
+            let imagess = JSON.parse(images)
             const thingsToDoString = things_to_do.join(',');
-            const imagesString = images.join(',');
+            const imagesString = imagess.join(',');
             // const imagesString = JSON.stringify(images);
-            const newExperience = await Experience.create({
-                type, title, images: imagesString, user_role,
-                modal, description, cid, scid, price, location,
-                from, to, things_to_do: thingsToDoString
-            });
+            if(edit_id != 0){
+                const experienceToUpdate = await Experience.findByPk(edit_id);
+                if (!experienceToUpdate) {
+                    const newExperience = await Experience.create({
+                        type, title, images: imagesString, user_role,
+                        modal, description, cid, scid, price, location,
+                        from, to, things_to_do: thingsToDoString
+                    });
+                }
+                const updatedExperience = await experienceToUpdate.update({
+                    type, title, images: imagesString, user_role,
+                    modal, description, cid, scid, price, location,
+                    from, to, things_to_do: thingsToDoString
+                });
+            }else{
+                const newExperience = await Experience.create({
+                    type, title, images: imagesString, user_role,
+                    modal, description, cid, scid, price, location,
+                    from, to, things_to_do: thingsToDoString
+                });
+            }
             res.redirect('/admin/experiences');
         } catch (error) {
             console.error('Error in add_experience:', error);
@@ -299,5 +316,33 @@ module.exports = {
                 message: 'Internal Server Error ' + error
             });
         }
-    },    
+    },
+    deleteExperience: async (req, res) => {
+        try {
+            const experienceId = req.query.experienceId; // Assuming the ID is passed as a URL parameter
+            const experienceToDelete = await Experience.findByPk(experienceId);
+    
+            if (!experienceToDelete) {
+                return res.status(404).send({
+                    flag: false,
+                    message: 'Experience not found'
+                });
+            }
+    
+            // Delete the experience
+            await experienceToDelete.destroy();
+    
+            res.status(200).send({
+                flag: true,
+                message: 'Experience deleted successfully'
+            });
+    
+        } catch (error) {
+            console.error('Error in deleteExperience:', error);
+            res.status(500).send({
+                flag: false,
+                message: 'Internal Server Error ' + error
+            });
+        }
+    }       
 };

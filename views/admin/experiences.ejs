@@ -69,6 +69,18 @@
 .dropzone{
   padding: 0px !important;
 }
+.image-wrapper {
+    display: inline-block;
+    position: relative;
+    margin-right: 10px;
+}
+
+.image-wrapper button {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
 </style>
   <div class="content-wrapper">
     <section class="content-header">
@@ -87,7 +99,9 @@
           <div class="col-12">
               <div class="d-flex justify-content-between align-items-center">
                 <div><h3 class="card-title">All Experiences</h3></div>
-                <div><button class="btn bg-black" data-toggle="modal" data-target="#exampleModalCenter">Create experience</button></div>
+                <div>
+                  <button class="btn bg-black" data-toggle="modal" data-target="#exampleModalCenter" onclick="resetModal()">Create experience</button>
+                </div>
               </div>
               <div style="width:100%;overflow: hidden;" class="d-flex justify-content-between mt-3 align-items-center">
               <div class="form-group icon-input" style="width:95%; float: left; margin-bottom: 0px;">
@@ -167,7 +181,7 @@
         <div class="row">
           <div class="col-12">
             <div class="form-group">
-              <label>Profile pic</label>
+              <label>Images</label>
               <div class="dropzone d-flex align-items-center justify-content-center" id="profile_imgDropzone"></div>
             </div>  
           </div>
@@ -176,6 +190,7 @@
               <label>Title</label>
               <input type="text" name="title" id="title" class="form-control" id="title"> 
               <input type="hidden" name="images" id="images" value="[]">
+              <input type="hidden" name="edit_id" id="edit_id" value="0">
             </div>
           </div>
           <div class="col-12 col-md-12">
@@ -272,10 +287,107 @@
   document.addEventListener('DOMContentLoaded', function () {
       window.stepper = new Stepper(document.querySelector('.bs-stepper'))
   });
-  function edit(data){
-    $('#name').val();
+
+    var usersData = {};
+
+    <% experience.forEach(function(user) { %>
+        usersData['user_<%- user.id %>'] = <%- JSON.stringify(user) %>;
+    <% }); %>
+
+    function edit(userId) {
+    var user = usersData['user_' + userId];
+    
+    // Populate the modal fields with the user data
+    document.getElementById('edit_id').value = userId;
+    document.getElementById('title').value = user.title;
+    document.getElementById('description').value = user.description;
+    document.getElementById('price').value = user.price;
+    document.getElementById('location').value = user.location;
+    document.getElementById('from').value = user.from;
+    document.getElementById('to').value = user.to;
+    
+    // Set the category and subcategory
+    document.getElementById('cid').value = user.cid;
+    updateSubCategoryDropdown(user.cid, function() {
+        document.getElementById('scid').value = user.scid;
+    });
+
+    // Populate images
+    var imagesArray = user.images ? user.images.split(',') : [];
+    populateImages(imagesArray);
+
+    // Populate "Things to Do"
+    populateThingsToDo(user.things_to_do);
+
+    // Show the modal
     $('#exampleModalCenter').modal('show');
-  }
+}
+
+function populateImages(imagesArray) {
+    var imagesContainer = document.getElementById('profile_imgDropzone');
+    imagesContainer.innerHTML = ''; // Clear existing images
+
+    imagesArray.forEach(function(imageUrl, index) {
+        var imgWrapper = document.createElement('div');
+        imgWrapper.className = 'image-wrapper'; // Add a class for styling if needed
+        imgWrapper.innerHTML = '<img src="' + imageUrl + '" style="width:100px; height:100px; margin-right: 10px;">' +
+                               '<button type="button" class="btn" onclick="removeImage(' + index + ')"><img src="/icon/Delete.svg" style="width:20px;height:20px;" class="m-1"></button>'; // Remove button
+
+        imagesContainer.appendChild(imgWrapper);
+    });
+
+    updateImagesInputField(imagesArray);
+}
+
+
+function removeImage(index) {
+    var images = JSON.parse(document.getElementById('images').value);
+    images.splice(index, 1); // Remove the image from the array
+    populateImages(images); // Repopulate the images
+    updateImagesInputField(images); // Update the hidden input field
+}
+
+function updateImagesInputField(imagesArray) {
+    // Transform each URL into an array and then stringify the entire structure
+    var formattedImagesData = imagesArray.map(function(imageUrl) {
+        return [imageUrl];
+    });
+    document.getElementById('images').value = JSON.stringify(formattedImagesData);
+}
+
+function populateThingsToDo(thingsToDoString) {
+    var thingsToDo = thingsToDoString.split(','); // Assuming things to do are comma-separated
+    var container = document.getElementById('things-to-do-container');
+    container.innerHTML = ''; // Clear existing items
+    thingsToDo.forEach(function(item) {
+        var div = document.createElement('div');
+        div.className = 'd-flex align-items-center things-to-do-item';
+        div.innerHTML = '<div style="width: 90%;">' +
+                        '<input type="text" name="things_to_do[]" class="form-control" value="' + item + '">' +
+                        '</div>' +
+                        '<img src="/icon/Delete.svg" style="width:20px;height:20px;" class="delete-icon m-1" onclick="deleteRow(this)">' +
+                        '<img src="/icon/Plus.svg" style="width:20px;height:20px;" class="add-icon m-1" onclick="addRow(this)">';
+        container.appendChild(div);
+    });
+}
+
+function updateSubCategoryDropdown(categoryId, callback) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '/admin/getsubcat?cid=' + categoryId, true);
+    xhr.onload = function () {
+        if (this.status === 200) {
+            var subcatSelect = document.getElementById('scid');
+            subcatSelect.innerHTML = this.responseText;
+            if (callback) {
+                callback(); // Call the callback function after updating the dropdown
+            }
+        } else {
+            console.error('Error in AJAX request for subcategories');
+        }
+    };
+    xhr.send();
+}
+
   function selectchech(checkbox,id){
       var customCheckboxDiv = document.querySelector('.bg-'+id);
         document.querySelector('.selectchech').classList.remove('selectchech');
@@ -286,7 +398,7 @@
     xhr.open('GET', '/admin/getsubcat?cid=' + element.value, true);
     xhr.onload = function () {
         if (this.status === 200) {
-            document.getElementById('subcategory-select').innerHTML = this.responseText;
+            document.getElementById('scid').innerHTML = this.responseText;
         } else {
             console.error('Error in AJAX request');
         }
@@ -305,4 +417,34 @@ function deleteRow(element) {
         item.parentNode.removeChild(item);
     }
 }
+
+function resetModal() {
+    // Reset input fields
+    document.getElementById('edit_id').value = 0;
+    document.getElementById('title').value = '';
+    document.getElementById('description').value = '';
+    document.getElementById('price').value = '';
+    document.getElementById('location').value = '';
+    document.getElementById('from').value = '';
+    document.getElementById('to').value = '';
+    
+    // Reset category and subcategory
+    document.getElementById('cid').selectedIndex = 0; // Assuming the first option is the default
+    document.getElementById('scid').innerHTML = '<option value="">Select Subcategory</option>'; // Reset subcategory
+
+    // Clear images
+    document.getElementById('profile_imgDropzone').innerHTML = '';
+    document.getElementById('images').value = '[]';
+
+    // Clear "Things to Do"
+    var thingsToDoContainer = document.getElementById('things-to-do-container');
+    thingsToDoContainer.innerHTML = `<div class="d-flex align-items-center things-to-do-item">
+                    <div style="width: 90%;">
+                        <input type="text" name="things_to_do[]" class="form-control">
+                    </div>
+                    <img src="/icon/Delete.svg" style="width:20px;height:20px;" class="delete-icon m-1" onclick="deleteRow(this)">
+                    <img src="/icon/Plus.svg" style="width:20px;height:20px;" class="add-icon m-1" onclick="addRow(this)">
+                </div>`;
+}
+
 </script>
