@@ -283,8 +283,9 @@ module.exports = {
                 type, title, images, user_role, modal, description,
                 cid, scid, price, location, from, to, things_to_do
             } = req.body;
+            let imagess = JSON.parse(images)
             const thingsToDoString = things_to_do.join(',');
-            const imagesString = images.join(',');
+            const imagesString = imagess.join(',');
             // const imagesString = JSON.stringify(images);
             const newExperience = await Experience.create({
                 type, title, images: imagesString, user_role,
