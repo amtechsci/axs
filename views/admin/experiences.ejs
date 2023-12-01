@@ -156,11 +156,11 @@
       <form action="/admin/add-experience" method="post">
         <div class="row">
           <div class="col custom-checkbox bg-experience m-1 selectchech">
-              <input type="radio" name="type" id="checkbox-experience" value="experience" onclick="selectchech(this,'experience')" checked />
-              <label for="checkbox-experience" name="type[]" style="margin: 0; white-space: nowrap;">Experience</label>
+              <input type="radio" id="experience" name="type" id="checkbox-experience" value="experience" onclick="selectchech(this,'experience')" checked />
+              <label for="checkbox-experience" style="margin: 0; white-space: nowrap;">Experience</label>
           </div>
           <div class="col custom-checkbox bg-event m-1">
-              <input type="radio" name="type" id="checkbox-event" value="event" onclick="selectchech(this,'event')" />
+              <input type="radio" id="event" name="type" id="checkbox-event" value="event" onclick="selectchech(this,'event')" />
               <label for="checkbox-event" style="margin: 0; white-space: nowrap;">Event</label>
           </div>
         </div>
@@ -174,22 +174,20 @@
           <div class="col-12 col-md-12">
             <div class="form-group">
               <label>Title</label>
-              <input type="text" name="title" id="title" class="form-control"> 
+              <input type="text" name="title" id="title" class="form-control" id="title"> 
               <input type="hidden" name="images" id="images" value="[]">
-              <input type="hidden" name="user_role" value="2">
-              <input type="hidden" name="modal" value="executive">
             </div>
           </div>
           <div class="col-12 col-md-12">
             <div class="form-group">
               <label>Task description</label>
-              <textarea name="description" class="form-control"></textarea>
+              <textarea name="description" class="form-control" id="description"></textarea>
             </div>
           </div>
           <div class="col-12 col-md-4">
             <div class="form-group">
               <label>Category</label>
-              <select class="form-control" name="cid" onchange="getsubcat(this)" required>
+              <select class="form-control" name="cid" id="cid" onchange="getsubcat(this)" required>
                 <option value="">Select Category</option>
                 <% categories.forEach(function(category) { %>
                 <option value="<%- category.id %>"><%- category.category_name %></option>
@@ -200,31 +198,31 @@
           <div class="col-12 col-md-4">
             <div class="form-group">
               <label>Sub category</label>
-              <select class="form-control" name="scid" id="subcategory-select"></select>
+              <select class="form-control" name="scid" id="scid" id="subcategory-select"></select>
             </div>
           </div>
           <div class="col-12 col-md-4">
             <div class="form-group">
               <label>Price</label>
-              <input type="number" name="price" class="form-control"> 
+              <input type="number" name="price" id="price" class="form-control"> 
             </div>
           </div>
           <div class="col-12 col-md-4">
             <div class="form-group">
               <label>Location/Place</label>
-              <input type="text" name="location" class="form-control"> 
+              <input type="text" name="location" id="location" class="form-control"> 
             </div>
           </div>
           <div class="col-12 col-md-4">
             <div class="form-group">
               <label>Start date</label>
-              <input type="date" name="from" class="form-control"> 
+              <input type="date" name="from" id="from" class="form-control"> 
             </div>
           </div>
           <div class="col-12 col-md-4">
             <div class="form-group">
               <label>End date</label>
-              <input type="date" name="to" class="form-control"> 
+              <input type="date" name="to" id="to" class="form-control"> 
             </div>
           </div>
           <div class="col-12">

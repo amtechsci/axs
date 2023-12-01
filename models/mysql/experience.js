@@ -29,6 +29,10 @@ module.exports = (sequelize) => {
       type: DataTypes.INTEGER,
       allowNull: true
     },
+    scid: {
+      type: DataTypes.INTEGER,
+      allowNull: true
+    },
     location: {
       type: DataTypes.TEXT,
       allowNull: true

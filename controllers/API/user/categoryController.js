@@ -166,10 +166,7 @@ module.exports = {
                 }
             });
             experiences.images = experiences.images.split(",");
-            experiences.things_to_do = experiences.things_to_do.split(",\n");
-            // experiences.images = images.map(str => {
-            //         return parseInt(str, 10);
-            //       });
+            experiences.things_to_do = experiences.things_to_do.split(",");
             res.status(200).send({
                 flag:true,
                 message: "recommendation fetch successfully",

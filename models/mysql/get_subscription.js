@@ -33,6 +33,10 @@ module.exports = (sequelize) => {
       type: DataTypes.TEXT,
       allowNull: true
     },
+    plan_image: {
+      type: DataTypes.TEXT,
+      allowNull: true
+    },
     created_at: {
       type: DataTypes.DATE,
       allowNull: false,
