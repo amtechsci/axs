@@ -49,7 +49,6 @@ app.use('/api/user', userRouter);
 app.use('/api/expert', expertRouter);
 app.use('/admin', adminRouter);
 
-// Start the HTTP + WebSocket Server
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}...`);
