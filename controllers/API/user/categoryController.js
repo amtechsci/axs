@@ -48,8 +48,8 @@ module.exports = {
     expert_category: async (req, res) => {
         try {
             const user = req.user;
-            const { cid, page } = req.query;
-            let ccid = cid ? cid : 0;
+            const { ecid, page } = req.query;
+            let ccid = ecid ? ecid : 0;
             let cpage = page ? parseInt(page) : 1; // Ensure that the page is an integer
             let pageSize = 50;
             const categories = await Category.findAll({
