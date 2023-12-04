@@ -144,7 +144,7 @@
                           %><%- formattedDate %></td>
                         <td>
                           <a href="#" onclick="edit('<%- user.id %>')"><img src="/icon/Edit.svg" style="width:20px;height:20px;" class="m-1"></a>
-                          <a href="#"><img src="/icon/Delete.svg" style="width:20px;height:20px;" class="m-1"></a>
+                          <a href="delete-experience/<%- user.id %>"><img src="/icon/Delete.svg" style="width:20px;height:20px;" class="m-1"></a>
                         </td>
                       </tr>
                     <% i++; }) %>
@@ -294,33 +294,24 @@
         usersData['user_<%- user.id %>'] = <%- JSON.stringify(user) %>;
     <% }); %>
 
-    function edit(userId) {
-    var user = usersData['user_' + userId];
-    
-    // Populate the modal fields with the user data
-    document.getElementById('edit_id').value = userId;
-    document.getElementById('title').value = user.title;
-    document.getElementById('description').value = user.description;
-    document.getElementById('price').value = user.price;
-    document.getElementById('location').value = user.location;
-    document.getElementById('from').value = user.from;
-    document.getElementById('to').value = user.to;
-    
-    // Set the category and subcategory
-    document.getElementById('cid').value = user.cid;
-    updateSubCategoryDropdown(user.cid, function() {
-        document.getElementById('scid').value = user.scid;
-    });
-
-    // Populate images
-    var imagesArray = user.images ? user.images.split(',') : [];
-    populateImages(imagesArray);
-
-    // Populate "Things to Do"
-    populateThingsToDo(user.things_to_do);
-
-    // Show the modal
-    $('#exampleModalCenter').modal('show');
+function edit(userId) {
+      var user = usersData['user_' + userId];
+      document.getElementById('edit_id').value = userId;
+      document.getElementById('title').value = user.title;
+      document.getElementById('description').value = user.description;
+      document.getElementById('price').value = user.price;
+      document.getElementById('location').value = user.location;
+      document.getElementById('from').value = user.from;
+      document.getElementById('to').value = user.to;
+      
+      document.getElementById('cid').value = user.cid;
+      updateSubCategoryDropdown(user.cid, function() {
+          document.getElementById('scid').value = user.scid;
+      });
+      var imagesArray = user.images ? user.images.split(',') : [];
+      populateImages(imagesArray);
+      populateThingsToDo(user.things_to_do);
+      $('#exampleModalCenter').modal('show');
 }
 
 function populateImages(imagesArray) {
@@ -335,7 +326,6 @@ function populateImages(imagesArray) {
 
         imagesContainer.appendChild(imgWrapper);
     });
-
     updateImagesInputField(imagesArray);
 }
 

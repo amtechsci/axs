@@ -17,10 +17,15 @@ router.get('/categories', adminController.categories);
 router.get('/expert-categories', adminController.expert_categories);
 router.get('/subscriptions', adminController.subscriptions);
 router.post('/file-upload', upload.single('file'), adminController.file_upload);
-router.post('/files-upload', upload.array('document_file',5), adminController.files_upload);
+router.post('/files-upload', upload.array('document_file',15), adminController.files_upload);
 router.post('/add-user', adminController.add_user);
-router.post('/add-experience', adminController.add_experience);
 router.get('/experiences', adminController.experiences);
 router.get('/getsubcat', adminController.getsubcat);
+router.post('/add-experience', adminController.add_experience);
+router.post('/add-category', adminController.add_category);
+router.get('/category/:id', adminController.get_category);
+router.post('/edit-category', adminController.edit_category);
+router.get('/delete-category/:id', adminController.deleteCategory);
+router.get('/delete-experience/:id', adminController.deleteExperience);
 
 module.exports = router;

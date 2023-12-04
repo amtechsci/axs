@@ -52,11 +52,6 @@
     z-index: 1;
     cursor: pointer;
 }
-
-.selectchech{
-    background-color: #0D0F13;
-    color: #fff;
-}
 .dropzone {
     min-height: 20px!important;
     max-height: 20px!important;
@@ -67,6 +62,26 @@
     background: #fff;
     padding: 20px 20px;
 }
+.dropzone .dz-preview .dz-image {
+    border-radius: 20px;
+    overflow: hidden;
+    width: 40px;
+    height: 40px;
+    position: relative;
+    display: block;
+    z-index: 10;
+}
+.dz-progress, .dz-details{
+  display: none;
+}
+.dropzone .dz-preview {
+    position: relative;
+    display: inline-block;
+    vertical-align: top;
+    margin: 0px;
+    min-height: 40px;
+}
+.dz-image img{width: 40px;}
 </style>
   <div class="content-wrapper">
     <section class="content-header">
@@ -109,8 +124,8 @@
                           %><%- formattedMainCateDate %>
                         </td>
                         <td>
-                          <a href="#"><img src="/icon/Edit.svg" style="width:20px;height:20px;" class="m-1"></a>
-                          <a href="#"><img src="/icon/Delete.svg" style="width:20px;height:20px;" class="m-1"></a>
+                          <a href="#" onclick="edit(<%- mainCate.id %>)"><img src="/icon/Edit.svg" style="width:20px;height:20px;" class="m-1"></a>
+                          <a href="delete-category/<%- mainCate.id %>"><img src="/icon/Delete.svg" style="width:20px;height:20px;" class="m-1"></a>
                           <span id="arrow<%= mainIndex %>" onclick="toggleSubCategories('subCate<%= mainIndex %>', '<%= mainIndex %>')" style="cursor:pointer;"><img src="/icon/Downarrow.svg"></span>
                         </td>
                       </tr>
@@ -125,8 +140,8 @@
                             %><%- formattedSubCateDate %>
                           </td>
                           <td>
-                            <a href="#"><img src="/icon/Edit.svg" style="width:20px;height:20px;" class="m-1"></a>
-                            <a href="#"><img src="/icon/Delete.svg" style="width:20px;height:20px;" class="m-1"></a>
+                            <a href="#" onclick="edit(<%- subCate.id %>)"><img src="/icon/Edit.svg" style="width:20px;height:20px;" class="m-1"></a>
+                            <a href="delete-category/<%- subCate.id %>"><img src="/icon/Delete.svg" style="width:20px;height:20px;" class="m-1"></a>
                           </td>
                         </tr>
                       <% }) %>
@@ -155,16 +170,15 @@
             <div class="col-1">
               <div class="form-group">
                 <label>Images</label>
-                <div class="dropzone d-flex align-items-center justify-content-center" id="profile_imgDropzone"></div>
-              </div>  
+                <div class="dropzone d-flex align-items-center justify-content-center category"></div>
+              </div>
             </div>
             <div class="col-4 col-md-4">
               <div class="form-group">
                 <label>Category name</label>
                 <input type="text" name="category_name" id="category_name" class="form-control">
                 <input type="hidden" name="category_img" id="category_img" value="">
-                <input type="hidden" name="sub_category_img" id="sub_category_img" value="[]">
-                <input type="hidden" name="edit_id" id="edit_id" value="0">
+                <input type="hidden" name="category_type" value="1">
               </div>
             </div>
             <div class="col-7 col-md-7">
@@ -183,19 +197,20 @@
                           <div class="col-1">
                             <div class="form-group">
                               <label>Images</label>
-                              <div class="dropzone d-flex align-items-center justify-content-center" id="profile_imgDropzone"></div>
+                              <div class="dropzone d-flex align-items-center justify-content-center categories"></div>
+                              <input type="hidden" name="sub_category[0]['img']" value="" id="sub_category_img">
                             </div>  
                           </div>
                           <div class="col-4 col-md-4">
                             <div class="form-group">
-                              <label>Category name</label>
-                              <input type="text" name="category_name" id="category_name" class="form-control">
+                              <label>Sub Category name</label>
+                              <input type="text" name="sub_category[0]['name']" class="form-control">
                             </div>
                           </div>
                           <div class="col-7 col-md-7">
                             <div class="form-group">
-                              <label>Category description</label>
-                              <input type="text" name="category_description" id="category_description" class="form-control" id="category_description">
+                              <label>Sub Category description</label>
+                              <input type="text" name="sub_category[0]['description']" class="form-control">
                             </div>
                           </div>
                         </div>
@@ -212,22 +227,72 @@
           </div>
         </form>
         </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="edit_category" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalCenterTitle">Add/Edit category</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
       </div>
+      <div class="modal-body">
+        <form action="/admin/edit-category" method="post">
+          <div class="row align-items-start">
+            <div class="col-1">
+              <div class="form-group">
+                <label>Images</label>
+                <div class="dropzone d-flex align-items-center justify-content-center edit-category-dropzone"></div>
+              </div>
+            </div>
+            <div class="col-4 col-md-4">
+              <div class="form-group">
+                <label>Category name</label>
+                <input type="text" name="category_name" id="edit_category_name" class="form-control">
+                <input type="hidden" name="category_img" id="edit_category_img" value="">
+                <input type="hidden" name="edit_category_type" value="1">
+                <input type="hidden" name="edit_id" value="" id="edit_id">
+              </div>
+            </div>
+            <div class="col-7 col-md-7">
+              <div class="form-group">
+                <label>Category description</label>
+                <input type="text" name="category_description" id="edit_category_description" class="form-control">
+              </div>
+            </div>
+            <div class="col-12 d-flex justify-content-center mt-2">
+              <button type="submit" class="btn btn-primary" style="width: 250px;font-size: 20px;">Save & close</button>
+            </div>
+          </div>
+        </form>
+        </div>
     </div>
   </div>
 </div>
 <script>
-  function selectchech(checkbox,id){
-      var customCheckboxDiv = document.querySelector('.bg-'+id);
-      if(checkbox.checked) {
-          customCheckboxDiv.classList.add('selectchech');
-      } else {
-          customCheckboxDiv.classList.remove('selectchech');
-      }
-  }
+  Dropzone.autoDiscover = false;
+function setupDropzone(dropzoneId, url, paramName, hiddenInputName) {
+  return new Dropzone(dropzoneId, {
+    url: url,
+    paramName: paramName,
+    maxFiles: 1, // Allow only one file
+    addRemoveLinks: true, // Show remove links on each file
+    acceptedFiles: ".pdf,.jpg,.jpeg,.png",
+    dictDefaultMessage: "C",
+    init: function () {
+      this.on("success", function (file, response) {
+        let input = document.querySelector('#'+hiddenInputName);
+        let fileNames = input.value ? JSON.parse(input.value) : [];
+        fileNames = response.document_url;
+        input.value = fileNames;
+      });
+    }
+  });
+}
+
   function toggleSubCategories(subCateClass, mainIndex) {
     var arrow = document.getElementById('arrow' + mainIndex);
     var subCategories = document.getElementsByClassName(subCateClass);
@@ -241,17 +306,102 @@
       }
     }
   }
+
+  let sci = 2;
   function addRow(element) {
     var container = document.getElementById("things-to-do-container");
-    var newItem = element.parentNode.cloneNode(true); // Clone the current item
-    container.appendChild(newItem);
+    var newItem = document.createElement("div"); // Create a new div element
+    newItem.innerHTML = `<div class="d-flex align-items-center things-to-do-item">
+                            <div style="width: 90%;">
+                              <div class="row align-items-start">
+                                <div class="col-1">
+                                  <div class="form-group">
+                                    <label>Images</label>
+                                    <div class="dropzone d-flex align-items-center justify-content-center categories${sci}"></div>
+                                    <input type="hidden" name="sub_category[${sci}]['img']" value="[]" id="sub_category_img${sci}">
+                                  </div>  
+                                </div>
+                                <div class="col-4 col-md-4">
+                                  <div class="form-group">
+                                    <label>Sub Category name</label>
+                                    <input type="text" name="sub_category[${sci}]['name']" class="form-control">
+                                  </div>
+                                </div>
+                                <div class="col-7 col-md-7">
+                                  <div class="form-group">
+                                    <label>Sub Category description</label>
+                                    <input type="text" name="sub_category[${sci}]['description']" class="form-control">
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <img src="/icon/Delete.svg" style="width:20px;height:20px;" class="delete-icon m-1" onclick="deleteRow(this)">
+                            <img src="/icon/Plus.svg" style="width:20px;height:20px;" class="add-icon m-1" onclick="addRow(this)">
+                          </div>`;
+    container.appendChild(newItem.firstChild);
+    setupDropzone(".categories" + sci, "/admin/files-upload", "document_file", "sub_category_img"+sci);
+    sci++;
 }
+
 
 function deleteRow(element) {
     var item = element.parentNode;
-    if (item.parentNode.childElementCount > 1) { // Ensure at least one row remains
-        item.parentNode.removeChild(item);
+    // Remove the row from the DOM
+    if (item.parentNode.childElementCount > 1) {
+      item.parentNode.removeChild(item);
     }
+  }
+
+  setupDropzone(".category", "/admin/files-upload", "document_file", "category_img");
+  setupDropzone(".categories", "/admin/files-upload", "document_file", "sub_category_img");
+  setupDropzone(".edit-category-dropzone", "/admin/files-upload", "document_file", "edit_category_img");
+  document.addEventListener('DOMContentLoaded', function () {
+    window.stepper = new Stepper(document.querySelector('.bs-stepper'));
+  });
+
+
+  async function edit(edit_id) {
+  try {
+    // Fetch category details
+    const response = await fetch(`/admin/category/${edit_id}`);
+    const categoryData = await response.json();
+
+    // Populate the modal fields
+    document.getElementById('edit_category_name').value = categoryData.category_name;
+    document.getElementById('edit_category_description').value = categoryData.category_description;
+    document.getElementById('edit_id').value = categoryData.id;
+
+    // Assuming categoryData.category_img is a URL to the image
+    document.getElementById('edit_category_img').value = categoryData.category_img;
+
+    // Initialize Dropzone for editing or clear existing files
+    let editDropzone = Dropzone.forElement(".edit-category-dropzone");
+    if (editDropzone) {
+      editDropzone.removeAllFiles(true); // Removes all files in the dropzone
+    } else {
+      // Initialize your Dropzone here if it's not already initialized
+      // setupDropzone(".edit-category-dropzone", ...);
+    }
+
+    // Add the existing image to the Dropzone
+    if (categoryData.category_img) {
+      let mockFile = { name: getNameFromUrl(categoryData.category_img), size: 12345, accepted: true };
+      editDropzone.emit("addedfile", mockFile);
+      editDropzone.emit("thumbnail", mockFile, categoryData.category_img);
+      editDropzone.files.push(mockFile); // Add the file to the Dropzone's files array
+    }
+
+    // Show the modal
+    $('#edit_category').modal('show');
+  } catch (error) {
+    console.error('Error fetching category data:', error);
+    // Handle the error appropriately
+  }
+}
+
+// Helper function to extract filename from URL
+function getNameFromUrl(url) {
+  return url.substring(url.lastIndexOf('/') + 1);
 }
 
 </script>

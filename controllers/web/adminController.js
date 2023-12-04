@@ -113,12 +113,14 @@ module.exports = {
             const mainCategories = categories
                 .filter(category => category.parent_id === 0)
                 .map(mainCategory => ({
+                    id: mainCategory.id,
                     category_name: mainCategory.category_name,
                     category_img: mainCategory.category_img,
                     parent_id: mainCategory.parent_id,
                     category_type: mainCategory.category_type,
                     created_at: mainCategory.created_at,
                     sub_category: findSubCategories(mainCategory.id).map(sub => ({
+                        id: sub.id,
                         category_name: sub.category_name,
                         category_img: sub.category_img,
                         parent_id: sub.parent_id,
@@ -332,10 +334,7 @@ module.exports = {
             // Delete the experience
             await experienceToDelete.destroy();
     
-            res.status(200).send({
-                flag: true,
-                message: 'Experience deleted successfully'
-            });
+            res.redirect('/admin/experiences');
     
         } catch (error) {
             console.error('Error in deleteExperience:', error);
@@ -344,5 +343,94 @@ module.exports = {
                 message: 'Internal Server Error ' + error
             });
         }
-    }       
+    },     
+    add_category: async (req, res) => {
+        try {
+            // Extract data from request
+            const { category_name, category_description, category_img, sub_category, category_type } = req.body;
+        
+            // Create main category
+            const mainCategory = await Category.create({
+              category_name,
+              category_description,
+              category_img,
+              parent_id: null, // null for main category
+              category_type // Assuming 1 represents 'category'
+            });
+        
+            // Create subcategories if they exist
+            if (sub_category && sub_category.length > 0) {
+              for (const sub of sub_category) {
+                await Category.create({
+                  category_name: sub["'name'"],
+                  category_description: sub["'description'"],
+                  category_img: sub["'img'"],
+                  parent_id: mainCategory.id, // set parent_id to main category's id
+                  category_type // Assuming 2 represents 'Expert category'
+                });
+              }
+            }
+        
+            res.status(200).send({ message: 'Category and subcategories added successfully.' });
+          } catch (error) {
+            console.error('Error adding category:', error);
+            res.status(500).send({ message: 'Error adding category' });
+          }
+    },
+    deleteCategory: async (req, res) => {
+        try {
+            const categoryId = req.params.id;
+            const experienceToDelete = await Category.findByPk(categoryId);
+    
+            if (!experienceToDelete) {
+                return res.status(404).send({
+                    flag: false,
+                    message: 'Experience not found'
+                });
+            }
+    
+            // Delete the experience
+            await experienceToDelete.destroy();
+            res.redirect('/admin/categories');
+    
+        } catch (error) {
+            console.error('Error in deleteExperience:', error);
+            res.status(500).send({
+                flag: false,
+                message: 'Internal Server Error ' + error
+            });
+        }
+    },  
+    get_category: async (req, res) => {
+        try {
+            const categoryId = req.params.id;
+            const experienceToDelete = await Category.findByPk(categoryId);
+            if (!experienceToDelete) {
+                return res.status(404).send({
+                    flag: false,
+                    message: 'Experience not found'
+                });
+            }
+            res.json(experienceToDelete);
+          } catch (error) {
+            console.error('Error fetching category data:', error);
+            res.status(500).send('Server error');
+          }
+    }, 
+    edit_category: async (req, res) => {
+        try {
+            const categoryId = req.body.edit_id;
+            await Category.update({
+                category_name: req.body.category_name,
+                category_description: req.body.category_description,
+                // category_img: [logic to handle new image upload]
+            }, {
+                where: { id: categoryId }
+            });
+            res.redirect('/admin/categories'); // Redirect to the category listing page
+        } catch (error) {
+            console.error('Error updating category:', error);
+            res.status(500).send('Internal Server Error');
+        }
+    }  
 };
