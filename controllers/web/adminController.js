@@ -283,7 +283,7 @@ module.exports = {
         try {
             const {
                 edit_id = 0, type, title, images, user_role, modal, description,
-                cid, scid, price, location, from, to, things_to_do
+                cid, scid, price, location, from, to, start_time, end_time, things_to_do
             } = req.body;
             let imagess = JSON.parse(images)
             const thingsToDoString = things_to_do.join(',');
@@ -292,11 +292,19 @@ module.exports = {
             if(edit_id != 0){
                 const experienceToUpdate = await Experience.findByPk(edit_id);
                 if (!experienceToUpdate) {
-                    const newExperience = await Experience.create({
-                        type, title, images: imagesString, user_role,
-                        modal, description, cid, scid, price, location,
-                        from, to, things_to_do: thingsToDoString
-                    });
+                    if(type == "experience"){
+                        const newExperience = await Experience.create({
+                            type, title, images: imagesString, user_role,
+                            modal, description, cid, scid, price, location,
+                            from, to, things_to_do: thingsToDoString
+                        });
+                    }else{
+                        const newExperience = await Experience.create({
+                            type, title, images: imagesString, user_role,
+                            modal, description, cid, scid, price, location,
+                            from, to, things_to_do: thingsToDoString, start_time, end_time
+                        });
+                    }
                 }
                 const updatedExperience = await experienceToUpdate.update({
                     type, title, images: imagesString, user_role,

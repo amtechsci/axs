@@ -80,7 +80,9 @@
     top: 0;
     right: 0;
 }
-
+.event{
+  display: none;
+}
 </style>
   <div class="content-wrapper">
     <section class="content-header">
@@ -240,6 +242,22 @@
               <input type="date" name="to" id="to" class="form-control"> 
             </div>
           </div>
+          <div class="col-12 event">
+            <div class="row">
+              <div class="col-12 col-md-4">
+                <div class="form-group">
+                  <label>Start time</label>
+                  <input type="time" name="start_time" class="form-control"> 
+                </div>
+              </div>
+              <div class="col-12 col-md-4">
+                <div class="form-group">
+                  <label>End time</label>
+                  <input type="time" name="end_time" class="form-control"> 
+                </div>
+              </div>
+            </div>
+          </div>
           <div class="col-12">
             <div class="form-group">
               <label>Things to do</label>
@@ -369,7 +387,7 @@ function updateSubCategoryDropdown(categoryId, callback) {
             var subcatSelect = document.getElementById('scid');
             subcatSelect.innerHTML = this.responseText;
             if (callback) {
-                callback(); // Call the callback function after updating the dropdown
+                callback();
             }
         } else {
             console.error('Error in AJAX request for subcategories');
@@ -382,6 +400,11 @@ function updateSubCategoryDropdown(categoryId, callback) {
       var customCheckboxDiv = document.querySelector('.bg-'+id);
         document.querySelector('.selectchech').classList.remove('selectchech');
         customCheckboxDiv.classList.add('selectchech');
+        if(id == "event"){
+          document.querySelector('.event').style.display = "block";
+        }else{
+          document.querySelector('.event').style.display = "none";
+        }
   }
   function getsubcat(element) {
     var xhr = new XMLHttpRequest();

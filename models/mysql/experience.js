@@ -45,6 +45,14 @@ module.exports = (sequelize) => {
       type: DataTypes.DATE,
       allowNull: true,
     },
+    start_time: {
+      type: DataTypes.TIME,
+      allowNull: true,
+    },
+    end_time: {
+      type: DataTypes.TIME,
+      allowNull: true,
+    },
     price: {
       type: DataTypes.STRING(7),
       allowNull: true
