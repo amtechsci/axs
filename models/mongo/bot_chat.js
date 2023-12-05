@@ -16,7 +16,6 @@ const bot_chatSchema = new mongoose.Schema({
     },
     message: {
         type: String,
-        maxlength: 155,
         required: true
     }
 }, {
