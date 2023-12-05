@@ -161,7 +161,7 @@ module.exports = {
                     }))
                 }));
                 
-            res.render('admin/categories', { category: mainCategories });
+            res.render('admin/expert_categories', { category: mainCategories });
         } catch (error) {
             console.error('Error in fetching categories:', error);
             res.status(500).send({
@@ -370,8 +370,11 @@ module.exports = {
                 });
               }
             }
-        
-            res.status(200).send({ message: 'Category and subcategories added successfully.' });
+            if(req.body.category_type == 1){
+                res.redirect('/admin/categories');
+            }else{
+                res.redirect('/admin/expert-categories');
+            }
           } catch (error) {
             console.error('Error adding category:', error);
             res.status(500).send({ message: 'Error adding category' });
@@ -388,11 +391,14 @@ module.exports = {
                     message: 'Experience not found'
                 });
             }
-    
             // Delete the experience
+            category_type = experienceToDelete.category_type;
             await experienceToDelete.destroy();
-            res.redirect('/admin/categories');
-    
+            if(req.body.edit_category_type == 1){
+                res.redirect('/admin/categories');
+            }else{
+                res.redirect('/admin/expert-categories');
+            }    
         } catch (error) {
             console.error('Error in deleteExperience:', error);
             res.status(500).send({
@@ -421,13 +427,17 @@ module.exports = {
         try {
             const categoryId = req.body.edit_id;
             await Category.update({
-                category_name: req.body.category_name,
+                category_name: req.body.edit_category_name,
+                category_img: req.body.edit_category_img,
                 category_description: req.body.category_description,
-                // category_img: [logic to handle new image upload]
             }, {
                 where: { id: categoryId }
             });
-            res.redirect('/admin/categories'); // Redirect to the category listing page
+            if(req.body.edit_category_type == 1){
+                res.redirect('/admin/categories');
+            }else{
+                res.redirect('/admin/expert-categories');
+            }
         } catch (error) {
             console.error('Error updating category:', error);
             res.status(500).send('Internal Server Error');

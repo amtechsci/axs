@@ -142,7 +142,7 @@ module.exports = {
                     cid: preferenceCids
                 }
             });
-            experiences.map(experience => {experience.images = experience.images.split(",")[0];});
+            experiences.map(experience => {experience.images = experience.images.split(",");});
             res.status(200).send({
                 flag:true,
                 message: "recommendations fetch successfully",
