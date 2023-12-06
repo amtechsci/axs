@@ -4,7 +4,7 @@ const Permissions = db.Permissions;
 const Roles = db.Roles;
 const Executive = db.Executive;
 const Category = db.Category;
-const Get_subscription = db.Get_subscription;
+const Get_subscription = db.Get_subscription;   
 const Experience = db.Experience;
 
 module.exports = {
@@ -363,7 +363,8 @@ module.exports = {
               category_description,
               category_img,
               parent_id: null, // null for main category
-              category_type // Assuming 1 represents 'category'
+              category_type,
+              parent_id:0
             });
         
             // Create subcategories if they exist
@@ -374,7 +375,7 @@ module.exports = {
                   category_description: sub["'description'"],
                   category_img: sub["'img'"],
                   parent_id: mainCategory.id, // set parent_id to main category's id
-                  category_type // Assuming 2 represents 'Expert category'
+                  category_type
                 });
               }
             }
