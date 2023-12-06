@@ -32,24 +32,47 @@ function setupWebSocketServer(server) {
                         chatdata = await db.Chat.findByPk(chat_id);
                         Bot_chat.create({uid:user.id,chat_id,sender:'user',message:data.message});
                         // need to change sender as dynamic ( user, executive)
-                    }else{
+                    }
+                    else{
                         chatdata = await db.Chat.create({uid:user.id,is_chat_bot_active:1});
                         chat_id = chatdata.id;
-                        const category_string = "Welcome! Please select a category from below to continue";
-                        Bot_chat.create({uid:0,chat_id,sender:'bot',message:category_string});
+                        const category_string = "Welcome to AXS! Please select a category from below to continue";
+                        await Bot_chat.create({uid:0,chat_id,sender:'assistant',message:category_string});
                         const category = await db.Category.findByPk(data.message);
                         if(category.parent_id != 0){
                             const parent_category = await db.Category.findByPk(category.parent_id);
-                            Bot_chat.create({uid:user.id,chat_id,sender:'user',message:parent_category.category_name});
+                            await Bot_chat.create({uid:user.id,chat_id,sender:'user',message:parent_category.category_name});
                             const sub_category_string = "Ok thank you, Please choose a sub category from below to continue.";
-                            Bot_chat.create({uid:0,chat_id,sender:'bot',message:sub_category_string});
+                            await Bot_chat.create({uid:0,chat_id,sender:'assistant',message:sub_category_string});
                         }
+                        // else {
                         Bot_chat.create({uid:user.id,chat_id,sender:'user',message:category.category_name});
-                        db.Chat.findByPk(chat_id).update({prompt:category.prompt});
+                        // }
+                        await db.Chat.findByPk(chat_id).then((chat) => {
+                            if (chat) {
+                            return chat.update({ prompt: category.prompt });
+                            } else {
+                            console.log("Chat record not found");
+                            }
+                        });
                     }
                     if(chatdata.is_chat_bot_active == 1){
-                        let bot_mess = "Hii";
-                        ws.send(JSON.stringify({uid:0,chat_id,message:bot_mess}));
+                       const message = await chatgpt.send_message(chat_id)
+
+                       if(message.message !== null && message.message !== undefined) {
+
+                       if(message.lifeCycleEvent === 1) {
+                        // To be implemented yet
+                       // assignChatToExecutive(chat_id);
+                      }
+                      else if(message.lifeCycleEvent === 2) {
+                        // create a task and ticket
+                        // createTaskTicket(user_id, chat_id, message.chatPrompts)
+                      }
+                       await Bot_chat.create({uid:0,chat_id,sender:'assistant',message:message.message});
+                    }
+
+                       ws.send(JSON.stringify({uid:0,chat_id,message:message.message}));
                     }else{
                         // send this message to ex
                         // ws.send();

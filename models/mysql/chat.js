@@ -18,6 +18,11 @@ module.exports = (sequelize) => {
       allowNull: true,
       defaultValue:1
     },
+    prompt: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+      defaultValue:1
+    },
     created_at: {
       type: DataTypes.DATE,
       allowNull: false,
