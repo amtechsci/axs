@@ -42,7 +42,7 @@ const handleChatLifeCycle = async (last_message, chat_prompt) => {
     console.log('you are talking to executive');
   }else{
     console.log('yo I am a bot');
-  }
+  } 
   // Handle create ticket and task if enough data is captured
   // const _chat_prompt = chat_prompt
   // _chat_prompt.push({"role": "user", "content": "Tell me the % of questions i answered / required questions to answer that system gave you?"})
@@ -90,6 +90,35 @@ module.exports = {
         returnMessage['chatPrompts'] = history_prompt;
 
         return returnMessage;
+
+      } catch (error) {
+          console.error('Error in gpt Message:', error);
+          res.status(500).send({
+              flag:false,
+              message: 'Internal Server Error'+error
+          });
+      }
+  },
+  description: async (chat_id) => {
+      try {
+        const returnMessage = {};
+        const base_prompt = await db.Chatbot.findOne({where:{id:1}});
+        const chat_prompt = await db.Chat.findOne({where:{id:chat_id}});
+        const history = await Bot_chat.find({chat_id});
+        let history_prompt = [];
+        history_prompt.push({"role": "system", "content":base_prompt.base_prompt + "\n\n" + chat_prompt.prompt});
+        for(var i=0;i<history.length;i++) {
+          if(history[i].sender.includes("assistant")) {
+            history_prompt.push({"role": "assistant", "content":history[i].message})
+          }
+          else {
+              history_prompt.push({"role": "user", "content":history[i].message})
+            }
+          }
+        history_prompt.push({"role": "user", "content":"write a summary of our chat"})
+        const gptMessage = await responseFromGpt(history_prompt);
+        // returnMessage['message'] = gptMessage;
+        return gptMessage;
 
       } catch (error) {
           console.error('Error in gpt Message:', error);

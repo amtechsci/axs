@@ -5,7 +5,7 @@ const twilio = require('twilio')(process.env.twilioAccountSid, process.env.twili
 
 const generateToken = (user) => {
     const secretKey = process.env.JWT_SECRET;
-    return jwt.sign({ id: user.id,device_id: user.device_id }, secretKey, { expiresIn: '365d' });
+    return jwt.sign({ id: user.id,device_id: user.device_id,type:"user" }, secretKey, { expiresIn: '365d' });
 };
 
 module.exports = {
