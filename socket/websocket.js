@@ -1,6 +1,6 @@
 const WebSocket = require('ws');
 const db = require('../models');
-const chatgpt = require('../models/chatgpt');
+const chatgpt = require('../controllers/API/chatGPT/chatgpt');
 const Bot_chat = require('../models/mongo/bot_chat');
 const jwt = require('jsonwebtoken');
 
@@ -31,6 +31,7 @@ function setupWebSocketServer(server) {
                         chat_id = data.chat_id;
                         chatdata = await db.Chat.findByPk(chat_id);
                         Bot_chat.create({uid:user.id,chat_id,sender:'user',message:data.message});
+                        // need to change sender as dynamic ( user, executive)
                     }else{
                         chatdata = await db.Chat.create({uid:user.id,is_chat_bot_active:1});
                         chat_id = chatdata.id;

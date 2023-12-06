@@ -15,6 +15,7 @@ const loadModels = (dir) => {
       if (fs.statSync(filepath).isDirectory()) {
         loadModels(filepath); // Recursively load models
       } else if (file.indexOf('.') !== 0 && file !== basename && file.slice(-3) === '.js') {
+        // console.log('Loading model file:', filepath);
         const model = require(filepath)(sequelize, Sequelize.DataTypes);
         db[model.name] = model;
       }

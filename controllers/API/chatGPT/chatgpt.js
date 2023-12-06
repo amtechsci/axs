@@ -1,5 +1,5 @@
-const db = require('../models');
-const Bot_chat = require('../models/mongo/bot_chat');
+const db = require('../../../models');
+const Bot_chat = require('../../../models/mongo/bot_chat');
 
 module.exports = {
   send_message: async (chat_id) => {
