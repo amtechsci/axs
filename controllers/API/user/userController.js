@@ -117,7 +117,7 @@ module.exports = {
                 return res.status(404).send({ message: "User not found" });
             }
             const { cid } = req.body;
-            await Preference.deleteAll({where:{uid:user.id}});
+            await Preference.destroy({where:{uid:user.id}});
             const catIds = cid.map(cat_id => ({ uid: user.id, cid: Number(cat_id) }));
             await Preference.bulkCreate(catIds);
             res.status(200).send({
