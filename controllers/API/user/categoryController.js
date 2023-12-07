@@ -186,6 +186,7 @@ module.exports = {
             const tasks = await Task.findAll({
                 where: { uid: user.id }
             });
+            console.log(tasks);
             for (const task of tasks) {
                 const category = await Category.findOne({ where: { id: task.cid } });
                 task.dataValues.category = category ? category.dataValues : null;

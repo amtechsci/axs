@@ -23,6 +23,10 @@ module.exports = (sequelize) => {
       allowNull: true,
       defaultValue:1
     },
+    category_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
     created_at: {
       type: DataTypes.DATE,
       allowNull: false,

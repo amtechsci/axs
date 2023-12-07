@@ -16,7 +16,7 @@ const responseFromGpt = async (history_prompt) => {
   return completion.choices[0].message.content
 }
 
-const handleChatLifeCycle = async (last_message, chat_prompt) => {
+const oldhandleChatLifeCycle = async (last_message, chat_prompt) => {
   var eventValue = 0;
   if(last_message.toString().toLowerCase().includes("connect") && last_message.toString().toLowerCase().includes("agent") ) {
       
@@ -65,6 +65,36 @@ const handleChatLifeCycle = async (last_message, chat_prompt) => {
     // 1 - for Assistant assigned & 2 - for create ticket and task 
     return eventValue;
 }
+const handleChatLifeCycle = async (last_message, chat_prompt) => {
+
+  var eventValue = 0;
+
+  console.log("last_message");
+  console.log(last_message);
+  const messageJson = JSON.parse(last_message);
+
+
+  if(messageJson != null) {
+    console.log(messageJson);
+    if(messageJson.live_specialist != null && messageJson.live_specialist != undefined) {
+      if(messageJson.live_specialist == "true") {
+        eventValue = 1;
+        return eventValue;
+      }
+    }
+
+    
+    if(messageJson.create_task != null && messageJson.create_task != undefined) {
+      if(messageJson.create_task == "true") {
+        eventValue = 2;
+        console.log("this is triggered");
+        return eventValue;
+      }
+    }
+  }
+
+  return eventValue;
+}
 module.exports = {
   send_message: async (chat_id) => {
       try {
@@ -74,6 +104,7 @@ module.exports = {
         const history = await Bot_chat.find({chat_id});
         let history_prompt = [];
         history_prompt.push({"role": "system", "content":base_prompt.base_prompt + "\n\n" + chat_prompt.prompt});
+
         for(var i=0;i<history.length;i++) {
           if(history[i].sender.includes("assistant")) {
             history_prompt.push({"role": "assistant", "content":history[i].message})
@@ -82,6 +113,8 @@ module.exports = {
               history_prompt.push({"role": "user", "content":history[i].message})
             }
           }
+
+          console.log(history_prompt)
         const gptMessage = await responseFromGpt(history_prompt);
         const lifeCycleEvent = await handleChatLifeCycle(gptMessage,history_prompt);
 
@@ -115,7 +148,7 @@ module.exports = {
               history_prompt.push({"role": "user", "content":history[i].message})
             }
           }
-        history_prompt.push({"role": "user", "content":"write a summary of our chat"})
+        history_prompt.push({"role": "user", "content":"Tell me the final summary in paragraph as a message that i can show in app, don't write any other thing like Sure, thank you or great day etc."})
         const gptMessage = await responseFromGpt(history_prompt);
         // returnMessage['message'] = gptMessage;
         return gptMessage;
